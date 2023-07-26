@@ -17,5 +17,5 @@ abc.label = 'a*b+c'
 abc.backward()
 
 // The calculation graph may be exported to the image
-// See the generated image in ./images/01-demo-values.png 
+// See the generated image in ./images/01-demo-values.png
 drawGraph(abc, '01-demo-values')
