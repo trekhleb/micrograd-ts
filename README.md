@@ -60,6 +60,10 @@ For debugging purposes, you may open the generated computation graph image from 
 
 ![Graph preview](./demo/server/images/01-demo-values.gif)
 
+Here is an example of the computation graph for just one neuron with one input value:
+
+![02-demo-neuron-single-input.png](./demo/server/images/02-demo-neuron-single-input.png)
+
 # Author
 
 [@trekhleb](https://trekhleb.dev)
