@@ -44,6 +44,10 @@ You may run demos using the following command:
 npm start --silent ./src/01-demo-values.ts
 ```
 
+If you're going to use the `drawGraph()` function from [utils.ts](./demo/server/src/utils.ts) to draw the graph of `Values` you need to:
+- Install [GraphViz](https://www.graphviz.org)
+- Update the `GRAPH_VIZ_BIN_PATH` in [utils.ts](./demo/server/src/utils.ts) if needed (for example you might want to change the `/opt/homebrew/bin` to `/usr/local/bin`)
+
 # Author
 
 [@trekhleb](https://trekhleb.dev)
