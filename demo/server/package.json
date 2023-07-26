@@ -1,0 +1,28 @@
+{
+  "name": "micrograd-ts",
+  "version": "0.0.1",
+  "description": "A TypeScript version of karpathy/micrograd",
+  "keywords": [
+    "automatic-differentiation",
+    "gradient-descent",
+    "machine-learning",
+    "neural-networks"
+  ],
+  "main": "index.js",
+  "scripts": {
+    "demo": "ts-node demo/demo.ts"
+  },
+  "author": "Oleksii Trekhleb (https://trekhleb.dev)",
+  "license": "MIT",
+  "engines": {
+    "npm": ">=9.5.0",
+    "node": ">=18.15.0"
+  },
+  "dependencies": {
+    "ts-node": "^10.9.1"
+  },
+  "devDependencies": {
+    "@types/graphviz": "^0.0.35",
+    "graphviz": "^0.0.9"
+  }
+}
