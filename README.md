@@ -43,3 +43,7 @@ You may run demos using the following command:
 ```sh
 npm start --silent ./src/01-demo-values.ts
 ```
+
+# Author
+
+[@trekhleb](https://trekhleb.dev)
