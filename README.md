@@ -7,7 +7,7 @@ A tiny scalar-valued autograd engine and a neural net library on top of it with 
 
 This repo might be useful for those who want to get a basic yet deep understanding of how neural networks work, using a TypeScript environment for experimentation.  
 
-## Project Structure
+## Project structure
 
 - [micrograd/](./micrograd/) — this folder is the core/purpose of the repo
   - [engine.ts](./micrograd/engine.ts) — the scalar `Value` class that supports basic math operations like `add`, `sub`, `div`, `mul`, `pow`, `exp`, `tanh` and has a `backward()` method that calculates a derivative of the expression, which is required for back-propagation flow.
@@ -15,3 +15,29 @@ This repo might be useful for those who want to get a basic yet deep understandi
 - [demo/](./demo/) - demos/playgrounds to experiment with the micrograd code
   - [browser/](./demo/browser/) — a demo playground to experiment with the micrograd implementation in the browser
   - [server/](./demo/server/) — a demo playground to experiment with the micrograd implementation in Node.js
+
+## Node.js playground
+
+Switch to the Node.js playground folder:
+
+```sh
+cd ./demo/server
+```
+
+Setup node v18 using [nvm](https://github.com/nvm-sh/nvm) (optional):
+
+```sh
+nvm use
+```
+
+Install dependencies:
+
+```sh
+npm i
+```
+
+Explore demo files in [./demo/server/src/](./demo/server/src/) folder:
+
+```sh
+npm start --silent ./src/01-demo-values.ts
+```

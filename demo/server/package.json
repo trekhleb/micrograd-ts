@@ -10,7 +10,7 @@
   ],
   "main": "index.js",
   "scripts": {
-    "demo": "ts-node demo/demo.ts"
+    "start": "ts-node"
   },
   "author": "Oleksii Trekhleb (https://trekhleb.dev)",
   "license": "MIT",
@@ -19,10 +19,8 @@
     "node": ">=18.15.0"
   },
   "dependencies": {
-    "ts-node": "^10.9.1"
-  },
-  "devDependencies": {
     "@types/graphviz": "^0.0.35",
-    "graphviz": "^0.0.9"
+    "graphviz": "^0.0.9",
+    "ts-node": "^10.9.1"
   }
 }
