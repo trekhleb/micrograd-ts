@@ -42,6 +42,8 @@ npm i
 
 Explore demo files in [./demo/server/src/](./demo/server/src/) folder.
 
+### Running demos
+
 You may run demos using the following command:
 
 ```sh
