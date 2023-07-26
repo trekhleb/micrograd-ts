@@ -36,7 +36,9 @@ Install dependencies:
 npm i
 ```
 
-Explore demo files in [./demo/server/src/](./demo/server/src/) folder. You may run them using following command:
+Explore demo files in [./demo/server/src/](./demo/server/src/) folder.
+
+You may run demos using the following command:
 
 ```sh
 npm start --silent ./src/01-demo-values.ts
