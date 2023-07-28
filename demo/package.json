@@ -10,10 +10,19 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "baseui": "^13.0.0",
+    "d3-graphviz": "^5.0.2",
+    "graphviz-react": "^1.2.5",
+    "hash-sum": "^2.0.0",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "styletron-engine-atomic": "^1.5.0",
+    "styletron-react": "^6.1.0",
+    "ts-graphviz": "^1.8.1"
   },
   "devDependencies": {
+    "@types/d3-graphviz": "^2.6.7",
+    "@types/hash-sum": "^1.0.0",
     "@types/react": "^18.2.15",
     "@types/react-dom": "^18.2.7",
     "@typescript-eslint/eslint-plugin": "^6.0.0",
