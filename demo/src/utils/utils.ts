@@ -20,6 +20,7 @@ function trace(root: Value) {
 // @see: https://graphviz.org/doc/info/lang.html
 // @see: https://github.com/ts-graphviz/ts-graphviz
 export function valToDot(val: Value): string {
+  const fontName = 'Arial';
   const g = new Digraph(sum(val), { [attribute.rankdir]: 'LR' })
   const { nodes, edges } = trace(val)
   for (const node of nodes) {
@@ -29,7 +30,7 @@ export function valToDot(val: Value): string {
     g.addNode(
       new Node(uid, {
         [attribute.shape]: 'record',
-        [attribute.fontname]: 'Arial',
+        [attribute.fontname]: fontName,
         [attribute.label]: `{${node.label}} | {data ${data} | grad ${grad}}`,
       })
     )
@@ -37,6 +38,7 @@ export function valToDot(val: Value): string {
       const opUid = uid + node.op
       g.addNode(
         new Node(opUid, {
+          [attribute.fontname]: fontName,
           [attribute.label]: node.op,
         })
       )
