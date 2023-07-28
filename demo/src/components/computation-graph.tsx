@@ -1,6 +1,11 @@
 import React from 'react'
 import { CSSProperties } from 'react'
 import { Graphviz } from 'graphviz-react'
+import {
+  Badge,
+  COLOR as BADGE_COLOR,
+  HIERARCHY as BADGE_HIERARCHY,
+} from 'baseui/badge'
 
 import { Value } from '../../../micrograd/engine'
 import { valToDot } from '../utils/graph'
@@ -44,11 +49,18 @@ export function ComputationGraph(props: ComputationGraphProps) {
   }
 
   return (
-    <div style={containerStyles} ref={containerRef}>
-      <Graphviz
-        dot={valToDot(value)}
-        options={{ fit: true, zoom: true, scale: 1, width, height }}
+    <>
+      <Badge
+        color={BADGE_COLOR.primary}
+        hierarchy={BADGE_HIERARCHY.primary}
+        content={<>Computation Graph</>}
       />
-    </div>
+      <div style={containerStyles} ref={containerRef}>
+        <Graphviz
+          dot={valToDot(value)}
+          options={{ fit: true, zoom: true, scale: 1, width, height }}
+        />
+      </div>
+    </>
   )
 }
