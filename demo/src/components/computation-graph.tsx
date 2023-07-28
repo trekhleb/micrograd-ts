@@ -9,6 +9,7 @@ import {
 
 import { Value } from '../../../micrograd/engine'
 import { valToDot } from '../utils/graph'
+import { Block } from 'baseui/block'
 
 type ComputationGraphProps = {
   value: Value
@@ -50,11 +51,13 @@ export function ComputationGraph(props: ComputationGraphProps) {
 
   return (
     <>
-      <Badge
-        color={BADGE_COLOR.primary}
-        hierarchy={BADGE_HIERARCHY.primary}
-        content={<>Computation Graph</>}
-      />
+      <Block marginBottom="10px">
+        <Badge
+          color={BADGE_COLOR.primary}
+          hierarchy={BADGE_HIERARCHY.primary}
+          content={<>Computation Graph</>}
+        />
+      </Block>
       <div style={containerStyles} ref={containerRef}>
         <Graphviz
           dot={valToDot(value)}

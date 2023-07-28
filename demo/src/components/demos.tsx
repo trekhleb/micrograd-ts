@@ -30,8 +30,6 @@ export function Demos() {
     ? location.hash.replace('#', '')
     : TabKey.Value
 
-  console.log(location.hash)
-
   const [activeKey, setActiveKey] = React.useState<React.Key>(defaultTabKey)
 
   const tabs = Array.from(TabsMap.entries()).map(
