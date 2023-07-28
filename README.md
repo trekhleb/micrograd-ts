@@ -13,8 +13,6 @@ This repo might be useful for those who want to get a basic yet deep understandi
   - [engine.ts](./micrograd/engine.ts) — the scalar `Value` class that supports basic math operations like `add`, `sub`, `div`, `mul`, `pow`, `exp`, `tanh` and has a `backward()` method that calculates a derivative of the expression, which is required for back-propagation flow.
   - [nn.ts](./micrograd/nn.ts) — the `Neuron`, `Layer`, and `MLP` (multi-layer perceptron) classes that implement a neural network on top of the differentiable scalar `Values`.
 - [demo/](./demo/) - demos/playgrounds to experiment with the micrograd code
-  - [browser/](./demo/browser/) — a demo playground to experiment with the micrograd implementation in the browser
-  - [server/](./demo/server/) — a demo playground to experiment with the micrograd implementation in Node.js
 
 ## Demo
 
@@ -44,55 +42,7 @@ Launch demo app:
 npm run dev
 ```
 
-The demo web-site will be available at `http://localhost:5173/`
-
-### Node.js playground
-
-### Setup
-
-Switch to the Node.js playground folder:
-
-```sh
-cd ./demo/server
-```
-
-Setup node v18 using [nvm](https://github.com/nvm-sh/nvm) (optional):
-
-```sh
-nvm use
-```
-
-Install dependencies:
-
-```sh
-npm i
-```
-
-### Exploring demos
-
-Explore demo files in [./demo/server/src/](./demo/server/src/) folder.
-
-### Running demos
-
-You may run demos using the following command:
-
-```sh
-npm start --silent ./src/01-demo-values.ts
-```
-
-### Computation graph (debugging)
-
-If you're going to use the `drawGraph()` function from [utils.ts](./demo/server/src/utils.ts) to draw the computation graph of `Values` you need to:
-- Install [GraphViz](https://www.graphviz.org)
-- Update the `GRAPH_VIZ_BIN_PATH` in [utils.ts](./demo/server/src/utils.ts) if needed (for example you might want to change the `/opt/homebrew/bin` to `/usr/local/bin`)
-
-For debugging purposes, you may open the generated computation graph image from the `./demo/server/images/` folder in a separate IDE tab. Then, every time the demo script is run, the image will be updated in IDE automatically: 
-
-![Graph preview](./demo/server/images/01-demo-values.gif)
-
-Here is an example of the computation graph for just one neuron with one input value:
-
-![02-demo-neuron-single-input.png](./demo/server/images/02-demo-neuron-single-input.png)
+The demo app will be available at `http://localhost:5173/`
 
 # Author
 
