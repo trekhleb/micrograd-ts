@@ -20,6 +20,13 @@ export function ComputationGraph(props: ComputationGraphProps) {
     if (!containerRef.current) return
     if (containerRef.current.clientWidth === width) return
     setWidth(containerRef.current.clientWidth)
+    const resizer = () => {
+      setWidth(containerRef?.current?.clientWidth || 500)
+    }
+    addEventListener('resize', resizer)
+    return () => {
+      removeEventListener('resize', resizer)
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -28,7 +35,7 @@ export function ComputationGraph(props: ComputationGraphProps) {
   const containerStyles: CSSProperties = {
     lineHeight: 0,
     display: 'flex',
-    backgroundColor: 'red',
+    // backgroundColor: 'red',
     overflow: 'scroll',
     borderWidth: '1px',
     borderColor: '#ccc',
