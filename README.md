@@ -45,6 +45,10 @@ npm run dev
 
 The demo app will be available at `http://localhost:5173/`
 
+### Playgrounds
+
+Go to the [./demo/src/demos/](./demo/src/demos/) to explore several playgrounds where you can experiment with the `Neuron`, `Layer`, and `MLP` classes.
+
 # Author
 
 [@trekhleb](https://trekhleb.dev)
