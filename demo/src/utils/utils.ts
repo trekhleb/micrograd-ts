@@ -29,6 +29,7 @@ export function valToDot(val: Value): string {
     g.addNode(
       new Node(uid, {
         [attribute.shape]: 'record',
+        [attribute.fontname]: 'Arial',
         [attribute.label]: `{${node.label}} | {data ${data} | grad ${grad}}`,
       })
     )
