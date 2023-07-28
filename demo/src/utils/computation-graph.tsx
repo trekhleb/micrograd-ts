@@ -39,7 +39,7 @@ export function ComputationGraph(props: ComputationGraphProps) {
     overflow: 'scroll',
     borderWidth: '1px',
     borderColor: '#ccc',
-    borderStyle: 'solid',
+    borderStyle: 'dashed',
     flex: 1,
   }
 
