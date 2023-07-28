@@ -1,6 +1,6 @@
 # Micrograd TS
 
-A tiny scalar-valued autograd engine and a neural net library on top of it with PyTorch-like API.
+A tiny scalar-valued autograd engine and a neural net on top of it.
 
 > - This is a TypeScript version of [karpathy/micrograd](https://github.com/karpathy/micrograd) repo.
 > - See the [The spelled-out intro to neural networks and back-propagation: building micrograd](https://www.youtube.com/watch?v=VMj-3S1tku0) YouTube video for the detailed  explanation of how neural networks and back propagation work.
@@ -16,7 +16,37 @@ This repo might be useful for those who want to get a basic yet deep understandi
   - [browser/](./demo/browser/) — a demo playground to experiment with the micrograd implementation in the browser
   - [server/](./demo/server/) — a demo playground to experiment with the micrograd implementation in Node.js
 
-## Node.js playground
+## Demo
+
+### Setup
+
+Switch to the demo folder:
+
+```sh
+cd ./demo
+```
+
+Setup node v18 using [nvm](https://github.com/nvm-sh/nvm) (optional):
+
+```sh
+nvm use
+```
+
+Install dependencies:
+
+```sh
+npm i
+```
+
+Launch demo app:
+
+```sh
+npm run dev
+```
+
+The demo web-site will be available at `http://localhost:5173/`
+
+### Node.js playground
 
 ### Setup
 
