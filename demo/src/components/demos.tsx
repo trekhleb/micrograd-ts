@@ -1,5 +1,7 @@
 import React from 'react'
 import { Tabs, Tab, ORIENTATION } from 'baseui/tabs-motion'
+import { useLocation } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
 import { DemoMLP } from '../demos/demo-mlp'
 import { DemoNeuron } from '../demos/demo-neuron'
@@ -21,7 +23,16 @@ const TabsMap: Map<TabKey, TabConfig> = new Map([
 ])
 
 export function Demos() {
-  const [activeKey, setActiveKey] = React.useState<React.Key>(TabKey.Value)
+  const location = useLocation()
+  const navigate = useNavigate()
+
+  const defaultTabKey: React.Key = location.hash
+    ? location.hash.replace('#', '')
+    : TabKey.Value
+
+  console.log(location.hash)
+
+  const [activeKey, setActiveKey] = React.useState<React.Key>(defaultTabKey)
 
   const tabs = Array.from(TabsMap.entries()).map(
     ([tabKey, tabConfig]: [TabKey, TabConfig]) => (
@@ -32,10 +43,15 @@ export function Demos() {
     )
   )
 
+  const onTabSelect = (tabKey: TabKey) => {
+    setActiveKey(tabKey)
+    navigate(`#${tabKey}`)
+  }
+
   return (
     <Tabs
       activeKey={activeKey}
-      onChange={({ activeKey }) => setActiveKey(`${activeKey}`)}
+      onChange={({ activeKey }) => onTabSelect(activeKey as TabKey)}
       orientation={ORIENTATION.horizontal}
       activateOnFocus
     >
