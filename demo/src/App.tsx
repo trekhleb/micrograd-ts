@@ -21,7 +21,7 @@ const TabsMap: Map<TabKey, TabConfig> = new Map([
 ])
 
 export function App() {
-  const [activeKey, setActiveKey] = React.useState<React.Key>('0')
+  const [activeKey, setActiveKey] = React.useState<React.Key>(TabKey.Value)
 
   const tabs = Array.from(TabsMap.entries()).map(
     ([tabKey, tabConfig]: [TabKey, TabConfig]) => (
