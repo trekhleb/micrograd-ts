@@ -1,6 +1,6 @@
 import { v } from '../../../micrograd/engine'
 import { MLP } from '../../../micrograd/nn'
-import { ComputationGraph } from '../utils/computation-graph'
+import { ComputationGraph } from '../components/computation-graph'
 
 export function DemoMLP() {
   const x = [v(2, { label: 'x1' }), v(3, { label: 'x2' })]

@@ -5,11 +5,11 @@ import { LightTheme, BaseProvider } from 'baseui'
 
 const engine = new Styletron()
 
-type LayoutType = {
+type LayoutProps = {
   children: React.ReactNode,
 }
 
-export function Layout(props: LayoutType) {
+export function Layout(props: LayoutProps) {
   return (
     <StyletronProvider value={engine}>
       <BaseProvider theme={LightTheme}>

@@ -1,5 +1,5 @@
 import { v } from '../../../micrograd/engine'
-import { ComputationGraph } from '../utils/computation-graph'
+import { ComputationGraph } from '../components/computation-graph'
 
 export function DemoValues() {
   // Inputs x1, x2

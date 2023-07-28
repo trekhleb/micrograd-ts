@@ -3,7 +3,7 @@ import { CSSProperties } from 'react'
 import { Graphviz } from 'graphviz-react'
 
 import { Value } from '../../../micrograd/engine'
-import { valToDot } from './utils'
+import { valToDot } from '../utils/graph'
 
 type ComputationGraphProps = {
   value: Value
