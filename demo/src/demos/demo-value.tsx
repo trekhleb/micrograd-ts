@@ -1,7 +1,7 @@
 import { v } from '../../../micrograd/engine'
 import { ComputationGraph } from '../components/computation-graph'
 
-export function DemoValues() {
+export function DemoValue() {
   // Inputs x1, x2
   const x1 = v(2, { label: 'x1' })
   const x2 = v(0, { label: 'x2' })

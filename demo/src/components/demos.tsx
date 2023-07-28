@@ -3,7 +3,7 @@ import { Tabs, Tab, ORIENTATION } from 'baseui/tabs-motion'
 
 import { DemoMLP } from '../demos/demo-mlp'
 import { DemoNeuron } from '../demos/demo-neuron'
-import { DemoValues } from '../demos/demo-values'
+import { DemoValue } from '../demos/demo-value'
 import { H1 } from './h1'
 
 enum TabKey {
@@ -15,7 +15,7 @@ enum TabKey {
 type TabConfig = { title: string; content: React.ReactNode }
 
 const TabsMap: Map<TabKey, TabConfig> = new Map([
-  [TabKey.Value, { title: 'Value', content: <DemoValues /> }],
+  [TabKey.Value, { title: 'Value', content: <DemoValue /> }],
   [TabKey.Neuron, { title: 'Neuron', content: <DemoNeuron /> }],
   [TabKey.MLP, { title: 'MLP', content: <DemoMLP /> }],
 ])
