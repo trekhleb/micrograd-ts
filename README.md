@@ -1,6 +1,7 @@
 # Micrograd TS
 
-> This is a TypeScript version of [karpathy/micrograd](https://github.com/karpathy/micrograd) repo. A tiny scalar-valued autograd engine and a neural net on top of it.
+> This is a TypeScript version of [karpathy/micrograd](https://github.com/karpathy/micrograd) repo.
+> A tiny scalar-valued autograd engine and a neural net on top of it.
 
 This repo might be useful for those who want to get a basic understanding of how neural networks work, using a TypeScript environment for experimentation.  
 
