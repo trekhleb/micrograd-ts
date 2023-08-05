@@ -124,7 +124,7 @@ export function DemoMLPTraining() {
             <FormControl
               label={() => 'Epochs'}
               caption={() =>
-                'For how many training session we plan tro train the network'
+                'For how many iterations we plan tro train the network'
               }
             >
               <Input
@@ -140,7 +140,7 @@ export function DemoMLPTraining() {
             <FormControl
               label={() => 'Learning Rate'}
               caption={() =>
-                'Defines how big should be the gradient convergence steps'
+                'Defines how big should be the gradient convergence step'
               }
             >
               <Input
@@ -155,7 +155,7 @@ export function DemoMLPTraining() {
           startEnhancer={() => <GiWeightLiftingUp />}
           onClick={trainCallback}
         >
-          Start Training
+          Retrain
         </Button>
       </Block>
       {/* <ComputationGraph value={out[0]} /> */}
