@@ -19,7 +19,11 @@ See the 🎬 [The spelled-out intro to neural networks and back-propagation: bui
 
 ## Demo
 
+To see the online demo, check the following link:
+
 [trekhleb.dev/micrograd-ts](https://trekhleb.dev/micrograd-ts)
+
+If you want to experiment with the code locally, follow the instructions below.
 
 ### Setup
 
