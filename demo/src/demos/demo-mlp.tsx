@@ -1,4 +1,5 @@
 import { Block } from 'baseui/block'
+
 import { v } from '../../../micrograd/engine'
 import { MLP } from '../../../micrograd/nn'
 import { Code } from '../components/code-block'

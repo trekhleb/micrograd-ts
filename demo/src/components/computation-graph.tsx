@@ -41,7 +41,6 @@ export function ComputationGraph(props: ComputationGraphProps) {
   const containerStyles: CSSProperties = {
     lineHeight: 0,
     display: 'flex',
-    // backgroundColor: 'red',
     overflow: 'scroll',
     borderWidth: '1px',
     borderColor: '#ccc',
@@ -54,7 +53,7 @@ export function ComputationGraph(props: ComputationGraphProps) {
       <Block marginBottom="10px">
         <Badge
           color={BADGE_COLOR.primary}
-          hierarchy={BADGE_HIERARCHY.primary}
+          hierarchy={BADGE_HIERARCHY.secondary}
           content={<>Computation Graph</>}
         />
       </Block>

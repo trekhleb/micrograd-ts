@@ -45,7 +45,7 @@ Launch demo app:
 npm run dev
 ```
 
-The demo app will be available at `http://localhost:5173/`
+The demo app will be available at [http://localhost:5173/micrograd-ts](http://localhost:5173/micrograd-ts)
 
 ### Playgrounds
 

@@ -9,13 +9,23 @@ import { StyledLink } from 'baseui/link'
 import { AiFillGithub } from 'react-icons/ai'
 import { Notification } from 'baseui/notification'
 
+import {
+  MICROGRAD_TS_BASE_DEMO_PATH,
+  MICROGRAD_TS_GITHUB_URL,
+} from '../config/links'
+
 export function Header() {
   return (
     <>
       <HeaderNavigation>
         <StyledNavigationList $align={ALIGN.left}>
           <StyledNavigationItem $style={{ fontWeight: 600 }}>
-            Micrograd TS
+            <StyledLink
+              href={MICROGRAD_TS_BASE_DEMO_PATH}
+              $style={{ textDecoration: 'none' }}
+            >
+              Micrograd TS
+            </StyledLink>
           </StyledNavigationItem>
         </StyledNavigationList>
         <StyledNavigationList $align={ALIGN.center} />
@@ -31,9 +41,7 @@ export function Header() {
             <Block marginRight="5px" display="flex">
               <AiFillGithub size={24} />
             </Block>
-            <StyledLink href="https://github.com/trekhleb/micrograd-ts">
-              GitHub
-            </StyledLink>
+            <StyledLink href={MICROGRAD_TS_GITHUB_URL}>GitHub</StyledLink>
           </StyledNavigationItem>
         </StyledNavigationList>
       </HeaderNavigation>
@@ -43,12 +51,12 @@ export function Header() {
           Body: { style: { width: 'auto' } },
         }}
       >
-        A tiny scalar-valued autograd engine and a neural net on top of it{' '}
-        (TypeScript version of{' '}
+        A tiny scalar-valued autograd engine and a neural net on top of it. A
+        TypeScript version of the{' '}
         <StyledLink href="https://github.com/karpathy/micrograd">
           karpathy/micrograd
         </StyledLink>{' '}
-        repo)
+        repo.
       </Notification>
     </>
   )

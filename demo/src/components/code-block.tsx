@@ -16,7 +16,7 @@ export function Code(props: CodeProps) {
       <Block marginBottom="10px">
         <Badge
           color={BADGE_COLOR.primary}
-          hierarchy={BADGE_HIERARCHY.primary}
+          hierarchy={BADGE_HIERARCHY.secondary}
           content={<>Code Example</>}
         />
       </Block>

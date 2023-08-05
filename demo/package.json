@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "type": "module",
   "description": "A TypeScript version of karpathy/micrograd",
+  "homepage": "https://trekhleb.dev/micrograd-ts",
   "keywords": [
     "automatic-differentiation",
     "gradient-descent",
