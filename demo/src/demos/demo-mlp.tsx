@@ -52,7 +52,7 @@ export function DemoMLP() {
         ]}
       />
 
-      <H2>Single Input</H2>
+      <H2>Three layers perceptron</H2>
       <Block marginBottom="40px">
         <Code
           code={`

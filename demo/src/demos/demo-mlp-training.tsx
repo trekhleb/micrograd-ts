@@ -8,6 +8,10 @@ import { GiWeightLiftingUp } from 'react-icons/gi'
 import { v, Value } from '../../../micrograd/engine'
 import { MLP } from '../../../micrograd/nn'
 import { Code } from '../components/code-block'
+import { StyledLink } from 'baseui/link'
+import { ParagraphMedium } from 'baseui/typography'
+import { CodeLinks } from '../components/code-links'
+import { H2 } from '../components/h2'
 
 // Create a training dataset with 4 entries.
 // Each dataset entry consists of 3 inputs (features).
@@ -92,6 +96,29 @@ export function DemoMLPTraining() {
 
   return (
     <>
+      <ParagraphMedium>
+        This demo shows how to create a simple{' '}
+        <StyledLink href="https://en.wikipedia.org/wiki/Multilayer_perceptron">
+          Multilayer perceptron
+        </StyledLink>{' '}
+        (MLP) with 3 layers (2 inputs, 4 neurons, 4 neurons, 1 output neuron).
+      </ParagraphMedium>
+
+      <H2>Code Context</H2>
+      <CodeLinks
+        links={[
+          {
+            url: 'https://github.com/trekhleb/micrograd-ts/blob/main/micrograd/nn.ts',
+            name: 'micrograd-ts/micrograd/nn.ts',
+          },
+          {
+            url: 'https://github.com/trekhleb/micrograd-ts/blob/main/demo/src/demos/demo-mlp-training.tsx',
+            name: 'micrograd-ts/demo/src/demos/demo-mlp-training.tsx',
+          },
+        ]}
+      />
+
+      <H2>Training Parameters</H2>
       <Block marginBottom="40px">
         <Block display="flex" flexDirection={['column', 'column', 'row']}>
           <Block flex="1" marginRight={['0px', '0px', '10px']}>
