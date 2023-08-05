@@ -19,6 +19,8 @@ See the 🎬 [The spelled-out intro to neural networks and back-propagation: bui
 
 ## Demo
 
+[trekhleb.dev/micrograd-ts](https://trekhleb.dev/micrograd-ts)
+
 ### Setup
 
 Switch to the demo folder:
