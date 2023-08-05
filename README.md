@@ -10,7 +10,7 @@ This repo might be useful for those who want to get a basic understanding of how
 - [micrograd/](./micrograd/) — this folder is the core/purpose of the repo
   - [engine.ts](./micrograd/engine.ts) — the scalar `Value` class that supports basic math operations like `add`, `sub`, `div`, `mul`, `pow`, `exp`, `tanh` and has a `backward()` method that calculates a derivative of the expression, which is required for back-propagation flow.
   - [nn.ts](./micrograd/nn.ts) — the `Neuron`, `Layer`, and `MLP` (multi-layer perceptron) classes that implement a neural network on top of the differentiable scalar `Values`.
-- [demo/](./demo/) - demos/playgrounds React application to experiment with the micrograd code
+- [demo/](./demo/) - demo React application to experiment with the micrograd code
   - [src/demos/](./demo/src/demos/) - several playgrounds where you can experiment with the `Neuron`, `Layer`, and `MLP` classes.
 
 ## Micrograd
