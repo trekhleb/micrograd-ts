@@ -36,7 +36,7 @@ export function DemoValue() {
       <H2>Simple Expression</H2>
       <DemoValueSimple />
 
-      <H2>Simulate the Neuron</H2>
+      <H2>Simulate the Neuron Expression</H2>
       <DemoValueMoreComplex />
     </>
   )
