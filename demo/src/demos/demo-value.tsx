@@ -4,10 +4,35 @@ import { v } from '../../../micrograd/engine'
 import { ComputationGraph } from '../components/computation-graph'
 import { Code } from '../components/code-block'
 import { H2 } from '../components/h2'
+import { CodeLinks } from '../components/code-links'
+import { ParagraphMedium } from 'baseui/typography'
+import { StyledLink } from 'baseui/link'
 
 export function DemoValue() {
   return (
     <>
+      <ParagraphMedium>
+        This demo shows how to create scalar values and how to build an{' '}
+        expression out of them. Once the expression is build we may do a{' '}
+        <StyledLink href="https://en.wikipedia.org/wiki/Backpropagation">
+          backpropagation
+        </StyledLink>
+      </ParagraphMedium>
+
+      <H2>Code Context</H2>
+      <CodeLinks
+        links={[
+          {
+            url: 'https://github.com/trekhleb/micrograd-ts/blob/main/micrograd/engine.ts',
+            name: 'micrograd-ts/micrograd/engine.ts',
+          },
+          {
+            url: 'https://github.com/trekhleb/micrograd-ts/blob/main/demo/src/demos/demo-value.tsx',
+            name: 'micrograd-ts/demo/src/demos/demo-value.tsx',
+          },
+        ]}
+      />
+
       <H2>Simple Expression</H2>
       <DemoValueSimple />
 
@@ -122,6 +147,7 @@ n.label = 'n'
 const o = n.tanh()
 o.label = 'o'
 
+// Once we have a chain of calculations we may calculate gradients (derivatives).
 o.backward()
     `}
         />

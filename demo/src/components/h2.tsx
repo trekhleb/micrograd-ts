@@ -6,5 +6,9 @@ type H2Props = {
 }
 
 export function H2(props: H2Props) {
-  return <HeadingXSmall>{props.children}</HeadingXSmall>
+  return (
+    <HeadingXSmall $style={{ marginBottom: '25px' }}>
+      {props.children}
+    </HeadingXSmall>
+  )
 }
