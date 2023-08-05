@@ -54,15 +54,13 @@ export function DemoMLPTraining() {
       }
 
       // Calculate loss
+      // Mean square error loss function.
       let loss = v(0)
       for (let i = 0; i < ys.length; i++) {
-        // Mean square error loss function.
-        // May be a cross-entropy loss.
         loss = loss.add(ys[i].sub(ypred[i]).pow(2))
       }
       loss = loss.div(ys.length)
       setLosses([...losses, loss.data])
-      console.log(`epoch #${epoch} loss: ${loss.data}`)
 
       // Backward pass
       // Stochastic gradient descent update
@@ -90,18 +88,19 @@ export function DemoMLPTraining() {
 
   React.useEffect(() => {
     // Initial training
-    // trainCallback()
+    trainCallback()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (
     <>
       <ParagraphMedium>
-        This demo shows how to create a simple{' '}
+        This demo illustrates the training process of the{' '}
         <StyledLink href="https://en.wikipedia.org/wiki/Multilayer_perceptron">
           Multilayer perceptron
         </StyledLink>{' '}
-        (MLP) with 3 layers (2 inputs, 4 neurons, 4 neurons, 1 output neuron).
+        (MLP) which consists of the forward pass, loss calculation, backward
+        pass, and adjusting weights.
       </ParagraphMedium>
 
       <H2>Code Context</H2>
@@ -163,7 +162,26 @@ export function DemoMLPTraining() {
 
       <Code
         code={`
-// Todo
+// Create a training dataset with 4 entries.
+// Each dataset entry consists of 3 inputs (features).
+const xs = [
+  [v(2), v(3), v(-1)],
+  [v(3), v(-1), v(0.5)],
+  [v(0.5), v(1), v(1)],
+  [v(1), v(1), v(-1)],
+]
+
+// Create training labels.
+// One label for each dataset entry.
+// Here we're saying that with the xs[i] input we expect the network to have y[i] in the output.
+const ys = [v(1), v(-1), v(-1), v(1)]
+
+// Create a Multi Layer Perceptron (MLP) network.
+// - 3 inputs
+// - 1st layer of 4 neurons
+// - 2nd layer of 4 neurons
+// - 1 output
+const mlp = new MLP(3, [4, 4, 1])
           `}
       />
     </>

@@ -30,7 +30,7 @@ export function Demos() {
 
   const defaultTabKey: React.Key = location.hash
     ? location.hash.replace('#', '')
-    : TabKey.Value
+    : TabKey.Training
 
   const [activeKey, setActiveKey] = React.useState<React.Key>(defaultTabKey)
 
