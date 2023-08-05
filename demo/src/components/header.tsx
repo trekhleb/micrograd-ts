@@ -7,6 +7,7 @@ import {
 } from 'baseui/header-navigation'
 import { StyledLink } from 'baseui/link'
 import { AiFillGithub } from 'react-icons/ai'
+import { GrRobot } from 'react-icons/gr'
 import { Notification } from 'baseui/notification'
 
 import {
@@ -20,12 +21,23 @@ export function Header() {
       <HeaderNavigation>
         <StyledNavigationList $align={ALIGN.left}>
           <StyledNavigationItem $style={{ fontWeight: 600 }}>
-            <StyledLink
-              href={MICROGRAD_TS_BASE_DEMO_PATH}
-              $style={{ textDecoration: 'none' }}
+            <Block
+              display="flex"
+              flexDirection="row"
+              alignItems="center"
+              justifyContent="center"
+              $style={{ lineHeight: 0 }}
             >
-              Micrograd TS
-            </StyledLink>
+              <Block marginRight="5px">
+                <GrRobot size="20" />
+              </Block>
+              <StyledLink
+                href={MICROGRAD_TS_BASE_DEMO_PATH}
+                $style={{ textDecoration: 'none' }}
+              >
+                Micrograd TS
+              </StyledLink>
+            </Block>
           </StyledNavigationItem>
         </StyledNavigationList>
         <StyledNavigationList $align={ALIGN.center} />
