@@ -1,12 +1,12 @@
 import { Block } from 'baseui/block'
+import { ParagraphMedium } from 'baseui/typography'
+import { StyledLink } from 'baseui/link'
 
 import { v } from '../../../micrograd/engine'
 import { ComputationGraph } from '../components/computation-graph'
 import { Code } from '../components/code-block'
 import { H2 } from '../components/h2'
 import { CodeLinks } from '../components/code-links'
-import { ParagraphMedium } from 'baseui/typography'
-import { StyledLink } from 'baseui/link'
 
 export function DemoValue() {
   return (
