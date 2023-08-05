@@ -1,15 +1,10 @@
 import React from 'react'
 import { CSSProperties } from 'react'
 import { Graphviz } from 'graphviz-react'
-import {
-  Badge,
-  COLOR as BADGE_COLOR,
-  HIERARCHY as BADGE_HIERARCHY,
-} from 'baseui/badge'
 
 import { Value } from '../../../micrograd/engine'
 import { valToDot } from '../utils/graph'
-import { Block } from 'baseui/block'
+import { StyledBadge } from './badge'
 
 type ComputationGraphProps = {
   value: Value
@@ -50,13 +45,7 @@ export function ComputationGraph(props: ComputationGraphProps) {
 
   return (
     <>
-      <Block marginBottom="10px">
-        <Badge
-          color={BADGE_COLOR.primary}
-          hierarchy={BADGE_HIERARCHY.secondary}
-          content={<>Computation Graph</>}
-        />
-      </Block>
+      <StyledBadge>Computation Graph</StyledBadge>
       <div style={containerStyles} ref={containerRef}>
         <Graphviz
           dot={valToDot(value)}
