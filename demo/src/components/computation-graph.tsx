@@ -49,7 +49,14 @@ export function ComputationGraph(props: ComputationGraphProps) {
       <div style={containerStyles} ref={containerRef}>
         <Graphviz
           dot={valToDot(value)}
-          options={{ fit: true, zoom: true, scale: 1, width, height }}
+          options={{
+            fit: true,
+            zoom: true,
+            scale: 1,
+            width,
+            height,
+            useWorker: false,
+          }}
         />
       </div>
     </>

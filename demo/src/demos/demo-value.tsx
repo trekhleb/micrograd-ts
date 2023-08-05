@@ -16,7 +16,10 @@ export function DemoValue() {
         expression out of them. Once the expression is build we may do a{' '}
         <StyledLink href="https://en.wikipedia.org/wiki/Backpropagation">
           backpropagation
-        </StyledLink>
+        </StyledLink>{' '}
+        to calculate <code>grads</code>. The <code>grad</code> values show how
+        strongly the particular scalar value impacts the output expression
+        value.
       </ParagraphMedium>
 
       <H2>Code Context</H2>
