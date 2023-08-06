@@ -14,6 +14,7 @@ import { Code } from '../components/code-block'
 import { CodeLinks } from '../components/code-links'
 import { H2 } from '../components/h2'
 import { LossChart } from '../components/loss-chart'
+import { toFloat, toInt } from '../utils/numbers'
 
 // Create a training dataset with 4 entries.
 // Each dataset entry consists of 3 inputs (features).
@@ -40,9 +41,8 @@ export function DemoMLPTraining() {
   const [epochs, setEpochs] = React.useState<number>(20)
   const [learningRate, setLearningRate] = React.useState<number>(0.1)
 
-  const [maxLoss, setMaxLoss] = React.useState<number | undefined>()
   const [losses, setLosses] = React.useState<number[]>([])
-  const [yPred, setYpred] = React.useState<number[]>([])
+  const [predictions, setPredictions] = React.useState<number[]>([])
 
   const trainCallback = React.useCallback(() => {
     const lossHistory: number[] = []
@@ -74,29 +74,15 @@ export function DemoMLPTraining() {
         p.data += -learningRate * p.grad
       }
 
-      setYpred(ypred.map((out) => out.data))
+      setPredictions(ypred.map((out) => out.data))
     }
     setLosses([...lossHistory])
-    if (maxLoss === undefined) {
-      setMaxLoss(lossHistory.reduce((prev, curr) => Math.max(prev, curr), 0))
-    }
-  }, [epochs, learningRate, maxLoss])
-
-  const onSetEpochs = (value: string | number) => {
-    const valueNumber = typeof value === 'number' ? value : parseInt(value)
-    setEpochs(valueNumber)
-  }
-
-  const onLearningRate = (value: string | number) => {
-    const valueNumber = typeof value === 'number' ? value : parseFloat(value)
-    setLearningRate(valueNumber)
-  }
+  }, [epochs, learningRate])
 
   React.useEffect(() => {
     // Initial training
     trainCallback()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [trainCallback])
 
   const lossChartData: Serie[] = [
     {
@@ -142,14 +128,14 @@ export function DemoMLPTraining() {
             <FormControl
               label={() => 'Epochs'}
               caption={() =>
-                'For how many iterations we plan tro train the network'
+                'For how many iterations we plan to train the network'
               }
             >
               <Input
                 type="number"
                 min={0}
                 value={epochs}
-                onChange={(e) => onSetEpochs(e.target.value)}
+                onChange={(e) => setEpochs(toInt(e.target.value, 0))}
               />
             </FormControl>
           </Block>
@@ -163,7 +149,7 @@ export function DemoMLPTraining() {
             >
               <Input
                 value={learningRate}
-                onChange={(e) => onLearningRate(e.target.value)}
+                onChange={(e) => setLearningRate(toFloat(e.target.value, 0))}
               />
             </FormControl>
           </Block>
