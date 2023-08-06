@@ -47,6 +47,8 @@ If you want to experiment with the code locally, follow the instructions below.
 
 ### Setup
 
+Clone the current repo locally.
+
 Switch to the demo folder:
 
 ```sh
