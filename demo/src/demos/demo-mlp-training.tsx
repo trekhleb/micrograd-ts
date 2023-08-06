@@ -6,11 +6,7 @@ import { Input } from 'baseui/input'
 import { GiWeightLiftingUp } from 'react-icons/gi'
 import { Datum, Serie } from '@nivo/line'
 import { StyledLink } from 'baseui/link'
-import {
-  ParagraphMedium,
-  MonoLabelLarge,
-  MonoHeadingXXLarge,
-} from 'baseui/typography'
+import { ParagraphMedium, MonoLabelLarge } from 'baseui/typography'
 import { Table } from 'baseui/table-semantic'
 
 import { v, Value } from '../../../micrograd/engine'
@@ -24,9 +20,9 @@ import { toFloat, toInt } from '../utils/numbers'
 const ys = [v(1), v(-1), v(-1), v(1)]
 
 export function DemoMLPTraining() {
-  const [epochsRaw, setEpochs] = React.useState<number | string>(20)
+  const [epochsRaw, setEpochs] = React.useState<number | string>(30)
   const [learningRateRaw, setLearningRate] = React.useState<number | string>(
-    0.1
+    0.2
   )
 
   const [losses, setLosses] = React.useState<number[]>([])
@@ -184,7 +180,7 @@ export function DemoMLPTraining() {
       >
         <Block marginRight={['0', '0', '30px']}>
           <Block marginBottom="40px">
-            <H2>Final Loss</H2>
+            <H2>Final Loss (MSE)</H2>
             <MonoLabelLarge>
               {(losses[losses.length - 1] || 0).toFixed(4)}
             </MonoLabelLarge>
@@ -195,7 +191,7 @@ export function DemoMLPTraining() {
               columns={['Expected', 'Predicted']}
               data={ys.map((y, trainingEntryIndex) => [
                 y.data,
-                predictions[trainingEntryIndex]?.toFixed(2),
+                predictions[trainingEntryIndex]?.toFixed(4),
               ])}
             />
           </Block>
