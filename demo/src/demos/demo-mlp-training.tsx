@@ -115,6 +115,14 @@ export function DemoMLPTraining() {
         pass, and adjusting the neurons weights.
       </ParagraphMedium>
 
+      <ParagraphMedium>
+        This is a simplified example where we're only dealing with the training
+        data and, basically, overfitting the network. However, it allows us to
+        test if the backpropagation implementation works correctly. After
+        several epoch of training you may see that the network predictions get
+        pretty close to the prediction from the training set.
+      </ParagraphMedium>
+
       <H2>Code Context</H2>
       <CodeLinks
         links={[
