@@ -11,6 +11,8 @@ export function Code(props: CodeProps) {
       <StyledBadge>Code Example</StyledBadge>
       <div style={{ fontFamily: "'Fira Code', monospace" }}>
         <CodeBlock
+          // eslint-disable-next-line
+          // @ts-ignore
           text={props.code.trim()}
           language="typescript"
           theme={dracula}
