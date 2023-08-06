@@ -17,6 +17,18 @@ import { H2 } from '../components/h2'
 import { LossChart } from '../components/loss-chart'
 import { toFloat, toInt } from '../utils/numbers'
 
+// Create a training dataset with 4 entries.
+// Each dataset entry consists of 3 inputs (features).
+const xs = [
+  [v(2), v(3), v(-1)],
+  [v(3), v(-1), v(0.5)],
+  [v(0.5), v(1), v(1)],
+  [v(1), v(1), v(-1)],
+]
+
+// Create training labels.
+// One label for each dataset entry.
+// Here we're saying that with the xs[i] input we expect the network to have y[i] in the output.
 const ys = [v(1), v(-1), v(-1), v(1)]
 
 export function DemoMLPTraining() {
@@ -32,20 +44,6 @@ export function DemoMLPTraining() {
   const learningRate = toFloat(learningRateRaw, 0)
 
   const trainCallback = React.useCallback(() => {
-    // Create a training dataset with 4 entries.
-    // Each dataset entry consists of 3 inputs (features).
-    const xs = [
-      [v(2), v(3), v(-1)],
-      [v(3), v(-1), v(0.5)],
-      [v(0.5), v(1), v(1)],
-      [v(1), v(1), v(-1)],
-    ]
-
-    // Create training labels.
-    // One label for each dataset entry.
-    // Here we're saying that with the xs[i] input we expect the network to have y[i] in the output.
-    const ys = [v(1), v(-1), v(-1), v(1)]
-
     // Create a Multi Layer Perceptron (MLP) network.
     // - 3 inputs
     // - 1st layer of 4 neurons
