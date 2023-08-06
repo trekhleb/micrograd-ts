@@ -6,7 +6,12 @@ import { Input } from 'baseui/input'
 import { GiWeightLiftingUp } from 'react-icons/gi'
 import { Datum, Serie } from '@nivo/line'
 import { StyledLink } from 'baseui/link'
-import { ParagraphMedium } from 'baseui/typography'
+import {
+  ParagraphMedium,
+  MonoLabelLarge,
+  MonoHeadingXXLarge,
+} from 'baseui/typography'
+import { Table } from 'baseui/table-semantic'
 
 import { v, Value } from '../../../micrograd/engine'
 import { MLP } from '../../../micrograd/nn'
@@ -15,6 +20,8 @@ import { CodeLinks } from '../components/code-links'
 import { H2 } from '../components/h2'
 import { LossChart } from '../components/loss-chart'
 import { toFloat, toInt } from '../utils/numbers'
+
+const ys = [v(1), v(-1), v(-1), v(1)]
 
 export function DemoMLPTraining() {
   const [epochsRaw, setEpochs] = React.useState<number | string>(20)
@@ -129,7 +136,7 @@ export function DemoMLPTraining() {
       />
 
       <H2>Training Parameters</H2>
-      <Block marginBottom="40px">
+      <Block>
         <Block display="flex" flexDirection={['column', 'column', 'row']}>
           <Block flex="1" marginRight={['0px', '0px', '10px']}>
             <FormControl
@@ -170,8 +177,37 @@ export function DemoMLPTraining() {
         </Button>
       </Block>
 
-      <H2>Training Loss History</H2>
-      <LossChart data={lossChartData} />
+      <Block
+        marginBottom="40px"
+        display="flex"
+        flexDirection={['column', 'column', 'row']}
+      >
+        <Block marginRight={['0', '0', '30px']}>
+          <Block marginBottom="40px">
+            <H2>Final Loss</H2>
+            <MonoLabelLarge>
+              {(losses[losses.length - 1] || 0).toFixed(4)}
+            </MonoLabelLarge>
+          </Block>
+          <Block>
+            <H2>Predictions</H2>
+            <Table
+              columns={['Expected', 'Predicted']}
+              data={ys.map((y, trainingEntryIndex) => [
+                y.data,
+                predictions[trainingEntryIndex]?.toFixed(2),
+              ])}
+            />
+          </Block>
+        </Block>
+
+        <Block marginLeft={['0', '0', '30px']} flex="1">
+          <H2>Training Loss History</H2>
+          <Block height="440px" $style={{ fontFamily: 'monospace' }}>
+            <LossChart data={lossChartData} />
+          </Block>
+        </Block>
+      </Block>
 
       <Code
         code={`
@@ -195,6 +231,35 @@ const ys = [v(1), v(-1), v(-1), v(1)]
 // - 2nd layer of 4 neurons
 // - 1 output
 const mlp = new MLP(3, [4, 4, 1])
+
+// Run training loops for a specified number of epochs.
+for (let epoch = 1; epoch <= epochs; epoch++) {
+  // Forward pass
+  const ypred: Value[] = []
+  for (const x of xs) {
+    ypred.push(mlp.forward(x)[0])
+  }
+
+  // Calculate loss
+  // Mean square error loss function.
+  let loss = v(0)
+  for (let i = 0; i < ys.length; i++) {
+    loss = loss.add(ys[i].sub(ypred[i]).pow(2))
+  }
+  loss = loss.div(ys.length)
+
+  // Backward pass
+  // Stochastic gradient descent update
+  mlp.zeroGrad() // reset grads to zero to start accumulating fresh gradients
+  loss.backward()
+
+  // Update
+  for (const p of mlp.parameters()) {
+    p.data += -learningRate * p.grad
+  }
+
+  setPredictions(ypred.map((out) => out.data))
+}
           `}
       />
     </>
