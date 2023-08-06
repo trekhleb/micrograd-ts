@@ -27,6 +27,10 @@ Based on the `Value` class we can build a `Neuron` expression:
 
 ![graph-2.png](./demo/src/assets/graph-2.png)
 
+Out of `Neurons`, we can build the `MLP` class that consists of several `Layers` of `Neurons`. The computation graph in this case may look a bit complex though.
+
+![graph-3.png](./demo/src/assets/graph-3.png)
+
 ## Demo (online)
 
 To see the online demo, check the following link:
