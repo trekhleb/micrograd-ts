@@ -4,14 +4,16 @@ import { FormControl } from 'baseui/form-control'
 import { Button } from 'baseui/button'
 import { Input } from 'baseui/input'
 import { GiWeightLiftingUp } from 'react-icons/gi'
+import { Datum, Serie } from '@nivo/line'
+import { StyledLink } from 'baseui/link'
+import { ParagraphMedium } from 'baseui/typography'
 
 import { v, Value } from '../../../micrograd/engine'
 import { MLP } from '../../../micrograd/nn'
 import { Code } from '../components/code-block'
-import { StyledLink } from 'baseui/link'
-import { ParagraphMedium } from 'baseui/typography'
 import { CodeLinks } from '../components/code-links'
 import { H2 } from '../components/h2'
+import { LossChart } from '../components/loss-chart'
 
 // Create a training dataset with 4 entries.
 // Each dataset entry consists of 3 inputs (features).
@@ -38,12 +40,12 @@ export function DemoMLPTraining() {
   const [epochs, setEpochs] = React.useState<number>(20)
   const [learningRate, setLearningRate] = React.useState<number>(0.1)
 
+  const [maxLoss, setMaxLoss] = React.useState<number | undefined>()
   const [losses, setLosses] = React.useState<number[]>([])
   const [yPred, setYpred] = React.useState<number[]>([])
 
   const trainCallback = React.useCallback(() => {
-    // Reset loss history and current epoch.
-    setLosses([])
+    const lossHistory: number[] = []
 
     // Run training loops for a specified number of epochs.
     for (let epoch = 1; epoch <= epochs; epoch++) {
@@ -60,7 +62,7 @@ export function DemoMLPTraining() {
         loss = loss.add(ys[i].sub(ypred[i]).pow(2))
       }
       loss = loss.div(ys.length)
-      setLosses([...losses, loss.data])
+      lossHistory.push(loss.data)
 
       // Backward pass
       // Stochastic gradient descent update
@@ -72,18 +74,22 @@ export function DemoMLPTraining() {
         p.data += -learningRate * p.grad
       }
 
-      setYpred(ypred.map((o) => o.data))
+      setYpred(ypred.map((out) => out.data))
     }
-  }, [epochs, losses, learningRate])
+    setLosses([...lossHistory])
+    if (maxLoss === undefined) {
+      setMaxLoss(lossHistory.reduce((prev, curr) => Math.max(prev, curr), 0))
+    }
+  }, [epochs, learningRate, maxLoss])
 
   const onSetEpochs = (value: string | number) => {
     const valueNumber = typeof value === 'number' ? value : parseInt(value)
-    setEpochs(valueNumber > 0 ? valueNumber : 0)
+    setEpochs(valueNumber)
   }
 
   const onLearningRate = (value: string | number) => {
     const valueNumber = typeof value === 'number' ? value : parseFloat(value)
-    setLearningRate(valueNumber > 0 ? valueNumber : 0.1)
+    setLearningRate(valueNumber)
   }
 
   React.useEffect(() => {
@@ -91,6 +97,18 @@ export function DemoMLPTraining() {
     trainCallback()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  const lossChartData: Serie[] = [
+    {
+      id: 'loss',
+      data: losses.map((loss: number, epoch: number): Datum => {
+        return {
+          x: epoch,
+          y: loss,
+        }
+      }),
+    },
+  ]
 
   return (
     <>
@@ -100,7 +118,7 @@ export function DemoMLPTraining() {
           Multilayer perceptron
         </StyledLink>{' '}
         (MLP) which consists of the forward pass, loss calculation, backward
-        pass, and adjusting weights.
+        pass, and adjusting the neurons weights.
       </ParagraphMedium>
 
       <H2>Code Context</H2>
@@ -158,7 +176,9 @@ export function DemoMLPTraining() {
           Retrain
         </Button>
       </Block>
-      {/* <ComputationGraph value={out[0]} /> */}
+
+      <H2>Training Loss History</H2>
+      <LossChart data={lossChartData} />
 
       <Code
         code={`

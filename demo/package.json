@@ -23,6 +23,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@nivo/line": "^0.83.0",
     "baseui": "^13.0.0",
     "d3-graphviz": "^5.0.2",
     "graphviz-react": "^1.2.5",
