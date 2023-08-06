@@ -31,6 +31,10 @@ Out of `Neurons`, we can build the `MLP` class that consists of several `Layers`
 
 ![graph-3.png](./demo/src/assets/graph-3.png)
 
+The main idea is that the computation graphs above "know" how to do automatic back propagation (how to calculate derivatives). This allows us to train the MLP network:
+
+![training-1.gif](./demo/src/assets/training-1.gif)
+
 ## Demo (online)
 
 To see the online demo, check the following link:
