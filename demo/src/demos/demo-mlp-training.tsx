@@ -16,35 +16,40 @@ import { H2 } from '../components/h2'
 import { LossChart } from '../components/loss-chart'
 import { toFloat, toInt } from '../utils/numbers'
 
-// Create a training dataset with 4 entries.
-// Each dataset entry consists of 3 inputs (features).
-const xs = [
-  [v(2), v(3), v(-1)],
-  [v(3), v(-1), v(0.5)],
-  [v(0.5), v(1), v(1)],
-  [v(1), v(1), v(-1)],
-]
-
-// Create training labels.
-// One label for each dataset entry.
-// Here we're saying that with the xs[i] input we expect the network to have y[i] in the output.
-const ys = [v(1), v(-1), v(-1), v(1)]
-
-// Create a Multi Layer Perceptron (MLP) network.
-// - 3 inputs
-// - 1st layer of 4 neurons
-// - 2nd layer of 4 neurons
-// - 1 output
-const mlp = new MLP(3, [4, 4, 1])
-
 export function DemoMLPTraining() {
-  const [epochs, setEpochs] = React.useState<number>(20)
-  const [learningRate, setLearningRate] = React.useState<number>(0.1)
+  const [epochsRaw, setEpochs] = React.useState<number | string>(20)
+  const [learningRateRaw, setLearningRate] = React.useState<number | string>(
+    0.1
+  )
 
   const [losses, setLosses] = React.useState<number[]>([])
   const [predictions, setPredictions] = React.useState<number[]>([])
 
+  const epochs = toInt(epochsRaw, 0)
+  const learningRate = toFloat(learningRateRaw, 0)
+
   const trainCallback = React.useCallback(() => {
+    // Create a training dataset with 4 entries.
+    // Each dataset entry consists of 3 inputs (features).
+    const xs = [
+      [v(2), v(3), v(-1)],
+      [v(3), v(-1), v(0.5)],
+      [v(0.5), v(1), v(1)],
+      [v(1), v(1), v(-1)],
+    ]
+
+    // Create training labels.
+    // One label for each dataset entry.
+    // Here we're saying that with the xs[i] input we expect the network to have y[i] in the output.
+    const ys = [v(1), v(-1), v(-1), v(1)]
+
+    // Create a Multi Layer Perceptron (MLP) network.
+    // - 3 inputs
+    // - 1st layer of 4 neurons
+    // - 2nd layer of 4 neurons
+    // - 1 output
+    const mlp = new MLP(3, [4, 4, 1])
+
     const lossHistory: number[] = []
 
     // Run training loops for a specified number of epochs.
@@ -80,9 +85,11 @@ export function DemoMLPTraining() {
   }, [epochs, learningRate])
 
   React.useEffect(() => {
-    // Initial training
-    trainCallback()
-  }, [trainCallback])
+    if (losses.length === 0) {
+      // Initial training
+      trainCallback()
+    }
+  }, [trainCallback, losses])
 
   const lossChartData: Serie[] = [
     {
@@ -134,8 +141,8 @@ export function DemoMLPTraining() {
               <Input
                 type="number"
                 min={0}
-                value={epochs}
-                onChange={(e) => setEpochs(toInt(e.target.value, 0))}
+                value={epochsRaw}
+                onChange={(e) => setEpochs(e.target.value)}
               />
             </FormControl>
           </Block>
@@ -148,8 +155,8 @@ export function DemoMLPTraining() {
               }
             >
               <Input
-                value={learningRate}
-                onChange={(e) => setLearningRate(toFloat(e.target.value, 0))}
+                value={learningRateRaw}
+                onChange={(e) => setLearningRate(e.target.value)}
               />
             </FormControl>
           </Block>
