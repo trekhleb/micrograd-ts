@@ -17,6 +17,10 @@ This repo might be useful for those who want to get a basic understanding of how
 
 See the 🎬 [The spelled-out intro to neural networks and back-propagation: building micrograd](https://www.youtube.com/watch?v=VMj-3S1tku0) YouTube video for the detailed explanation of how neural networks and back propagation work. The video also explains in detail what the `Neuron`, `Layer`, `MLP`, and `Value` classes do.
 
+We build a computation graph of scalar values. Here is an example of how the computation graph for the `a * b + c` expression looks like:
+
+![graph-1.png](./demo/src/assets/graph-1.png)
+
 ## Demo (online)
 
 To see the online demo, check the following link:
