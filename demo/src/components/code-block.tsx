@@ -1,4 +1,6 @@
 import { CodeBlock, dracula } from 'react-code-blocks'
+import { styled } from 'baseui'
+
 import { StyledBadge } from './badge'
 
 type CodeProps = {
@@ -9,7 +11,7 @@ export function Code(props: CodeProps) {
   return (
     <>
       <StyledBadge>Code Example</StyledBadge>
-      <div style={{ fontFamily: "'Fira Code', monospace" }}>
+      <CodeContainer>
         <CodeBlock
           // eslint-disable-next-line
           // @ts-ignore
@@ -18,7 +20,12 @@ export function Code(props: CodeProps) {
           theme={dracula}
           showLineNumbers={false}
         />
-      </div>
+      </CodeContainer>
     </>
   )
 }
+
+const CodeContainer = styled('div', ({$theme}) => ({
+  fontFamily: $theme.typography.MonoLabelSmall.fontFamily,
+  fontSize: $theme.typography.MonoLabelSmall.fontSize
+}))
