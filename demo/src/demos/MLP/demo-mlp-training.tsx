@@ -1,21 +1,24 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import { Block } from 'baseui/block'
 import { FormControl } from 'baseui/form-control'
 import { Button } from 'baseui/button'
 import { Input } from 'baseui/input'
 import { GiWeightLiftingUp } from 'react-icons/gi'
 import { Datum, Serie } from '@nivo/line'
+import { ScatterPlotRawSerie, ScatterPlotDatum } from '@nivo/scatterplot/dist/types/types'
 import { StyledLink } from 'baseui/link'
 import { ParagraphMedium, MonoLabelLarge } from 'baseui/typography'
 import { Table } from 'baseui/table-semantic'
 
-import { v, Value } from '../../../micrograd/engine'
-import { MLP } from '../../../micrograd/nn'
-import { Code } from '../components/code-block'
-import { CodeLinks } from '../components/code-links'
-import { H2 } from '../components/h2'
-import { LossChart } from '../components/loss-chart'
-import { toFloat, toInt } from '../utils/numbers'
+import { v, Value } from '../../../../micrograd/engine'
+import { MLP } from '../../../../micrograd/nn'
+import { Code } from '../../components/code-block'
+import { CodeLinks } from '../../components/code-links'
+import { H2 } from '../../components/h2'
+import { LossChart } from '../../components/loss-chart'
+import { toFloat, toInt } from '../../utils/numbers'
+import { generateCircleData } from './dataUtils'
+import { MoonChart } from '../../components/MoonData'
 
 // Create a training dataset with 4 entries.
 // Each dataset entry consists of 3 inputs (features).
@@ -37,11 +40,14 @@ export function DemoMLPTraining() {
     0.2
   )
 
+  const [dataPointsRaw, setDataPoints] = React.useState<number | string>(150);
+
   const [losses, setLosses] = React.useState<number[]>([])
   const [predictions, setPredictions] = React.useState<number[]>([])
 
   const epochs = toInt(epochsRaw, 0)
   const learningRate = toFloat(learningRateRaw, 0)
+  const dataPoints = toInt(dataPointsRaw, 0);
 
   const trainCallback = React.useCallback(() => {
     // Create a Multi Layer Perceptron (MLP) network.
@@ -101,6 +107,21 @@ export function DemoMLPTraining() {
           y: loss,
         }
       }),
+    },
+  ]
+
+  console.log('test');
+  const circle = useMemo(() => generateCircleData(dataPoints), [dataPoints]);
+
+  const data: ScatterPlotRawSerie<ScatterPlotDatum>[] = [
+    {
+      id: 'circle_data',
+      data: circle.data.map((datum, idx) => {
+        return {
+          x: datum[0],
+          y: datum[1]
+        }
+      })
     },
   ]
 
@@ -207,6 +228,65 @@ export function DemoMLPTraining() {
           <H2>Training Loss History</H2>
           <Block height="440px" $style={{ fontFamily: 'monospace' }}>
             <LossChart data={lossChartData} />
+          </Block>
+        </Block>
+      </Block>
+
+      <H2>Moon Data Training Parameters</H2>
+      <Block>
+        <Block marginBottom="40px" display="flex" flexDirection={['column', 'column', 'row']}>
+          <Block flex="1" marginRight={['0px', '0px', '10px']}>
+            <FormControl
+              label={() => 'Data Points'}
+              caption={() =>
+                'Number of random data points generated'
+              }
+            >
+              <Input
+                type="number" 
+                min={0}
+                value={dataPointsRaw}
+                onChange={(e) => setDataPoints(e.target.value)}
+              />
+            </FormControl>
+          </Block>
+
+          <Block flex="1" marginLeft={['0px', '0px', '10px']}>
+            <FormControl
+              label={() => 'Learning Rate'}
+              caption={() =>
+                'Defines how big should be the gradient convergence step'
+              }
+            >
+              <Input
+                value={learningRateRaw}
+                onChange={(e) => setLearningRate(e.target.value)}
+              />
+            </FormControl>
+          </Block>
+          <Block flex="1" marginLeft={['0px', '0px', '10px']}>
+            <FormControl
+              label={() => 'Learning Rate'}
+              caption={() =>
+                'Defines how big should be the gradient convergence step'
+              }
+            >
+              <Input
+                value={learningRateRaw}
+                onChange={(e) => setLearningRate(e.target.value)}
+              />
+            </FormControl>
+          </Block>
+        </Block>
+      </Block>
+      <Block marginBottom="40px" display="flex">
+        <Block height="440px" $style={{fontFmaily: 'monospace'}}>
+          <MoonChart data={data}></MoonChart>
+          <Block justifyContent='space-evenly' display="flex"> 
+            <Button>Moon Data</Button>
+            <Button>Circle Data</Button>
+            <Button>Spiral Data</Button>
+
           </Block>
         </Block>
       </Block>

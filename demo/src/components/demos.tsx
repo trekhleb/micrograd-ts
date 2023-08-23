@@ -6,7 +6,7 @@ import { H1 } from './h1'
 import { DemoMLP } from '../demos/demo-mlp'
 import { DemoNeuron } from '../demos/demo-neuron'
 import { DemoValue } from '../demos/demo-value'
-import { DemoMLPTraining } from '../demos/demo-mlp-training'
+import { DemoMLPTraining } from '../demos/MLP/demo-mlp-training'
 
 enum TabKey {
   Value = 'value',
