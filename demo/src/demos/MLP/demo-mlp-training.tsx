@@ -67,6 +67,10 @@ export function DemoMLPTraining() {
   const [circleData, setCircleData] = React.useState<Data>({data: [], labels: []});
 
   React.useEffect(() => {
+    setCircleData(generateCircleData(150))
+  }, []);
+
+  React.useEffect(() => {
     circleWorker.onmessage = (event: MessageEvent<Data>) => {
       setCircleData(event.data);
     }
@@ -296,7 +300,7 @@ export function DemoMLPTraining() {
       <Block marginBottom="40px" display="flex">
         <Block height="440px" $style={{fontFmaily: 'monospace'}}>
           <Suspense>
-            <MoonChart data={data}></MoonChart>
+            <MoonChart data={data} labels={circleData.labels}></MoonChart>
           </Suspense>
           <Block justifyContent='space-evenly' display="flex"> 
             <Button>Moon Data</Button>
