@@ -265,7 +265,7 @@ export function DemoMLPTraining() {
       </Block>
 
       <Block
-        marginBottom="40px"
+        marginBottom="-20px"
         display="flex"
         flexDirection={['column', 'column', 'row']}
       >
@@ -274,6 +274,47 @@ export function DemoMLPTraining() {
             <H2>Final Loss (MSE)</H2>
             <MonoLabelLarge>
               {(losses[losses.length - 1] || 0).toFixed(4)}
+            </MonoLabelLarge>
+          </Block>
+          <Block>
+            <H2>Final Predictions</H2>
+            <Table
+              columns={['Expected', 'Predicted']}
+              data={ys.map((y, trainingEntryIndex) => [
+                y.data,
+                predictions[trainingEntryIndex]?.toFixed(4),
+              ])}
+            />
+          </Block>
+        </Block>
+
+        <Block marginLeft={['0', '0', '30px']} flex="1">
+          <H2>Training Loss History</H2>
+          <Block height="440px" $style={{ fontFamily: 'monospace' }}>
+            <LossChart data={lossChartData} />
+          </Block>
+        </Block>
+      </Block>
+
+      <Block
+        marginBottom="0px"
+        display="flex"
+        flexDirection={['column', 'column', 'row']}
+      >
+        <Block marginRight={['0', '0', '30px']}>
+          <Block marginBottom="40px">
+            <H2>Legend</H2>
+            <MonoLabelLarge>
+              <Block display="flex" width='auto' flexDirection={'column'}>
+                <Block display="flex">
+                  <div style={{backgroundColor: 'rgba(0, 255, 0, 0.5)', width: '20px', height: '20px', marginRight: '10px'}}/>
+                  <div>True (1)</div>
+                </Block>
+                <Block display="flex">
+                  <div style={{backgroundColor: 'rgba(255, 0, 0, 0.5)', width: '20px', height: '20px', marginRight: '10px'}}/>
+                  <div>False (-1)</div>
+                </Block>
+              </Block>
             </MonoLabelLarge>
           </Block>
           <Block>
