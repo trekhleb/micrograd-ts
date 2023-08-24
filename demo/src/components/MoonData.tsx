@@ -1,4 +1,4 @@
-import { ScatterPlot, ScatterPlotRawSerie, ScatterPlotDatum} from '@nivo/scatterplot'
+import { ScatterPlot, ScatterPlotRawSerie, ScatterPlotDatum, ResponsiveScatterPlot} from '@nivo/scatterplot'
 
 type MoonChartProps = {
   data: ScatterPlotRawSerie<ScatterPlotDatum>[]
@@ -10,23 +10,12 @@ export const MoonChart = (props: MoonChartProps) => {
   console.log(data)
 
   return (
-    <ScatterPlot
-      width={800}
-      height={400}
+    <ResponsiveScatterPlot
       data={data}
       margin={{ top: 8, right: 8, bottom: 70, left: 60 }}
       xScale={{type: 'linear', min: -10, max: 10}}
       yScale={{type: 'linear', min: -10, max: 10}}
-      axisBottom={{
-        legend: 'Epochs',
-        legendOffset: 36,
-        legendPosition: 'middle',
-      }}
-      axisLeft={{
-        legend: 'Loss',
-        legendOffset: -50,
-        legendPosition: 'middle',
-      }}
+
       layers={[
         'grid',
         'axes',
@@ -41,8 +30,8 @@ export const MoonChart = (props: MoonChartProps) => {
               {data[0].data.map((val, idx) => {
                 return (
                   <rect
-                    x={props.xScale(val.x - 0.13)}
-                    y={props.yScale(val.y + 0.3)}
+                    x={props.xScale((val.x as number) - 0.13)}
+                    y={props.yScale((val.y as number) + 0.3)}
                     width={10}
                     height={10}
                     fill={labels[idx] === -1 ? `rgba(255, 0, 0, 0.5)` : `rgba(0, 255, 0, 0.5)`}

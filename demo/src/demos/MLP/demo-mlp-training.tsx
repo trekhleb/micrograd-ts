@@ -21,6 +21,7 @@ import { generateCircleData } from './dataUtils'
 import { MoonChart } from '../../components/MoonData'
 import { Select } from 'baseui/select'
 import { CaptionBlock } from '../../components/CaptionBlock'
+import { LegendLayout } from '../../components/LegendLayout'
 
 // Create a training dataset with 4 entries.
 // Each dataset entry consists of 3 inputs (features).
@@ -65,6 +66,8 @@ export function DemoMLPTraining() {
 
   const circleWorker = new Worker('circleWorker.js');
   const [circleData, setCircleData] = React.useState<Data>({data: [], labels: []});
+  const [hoverTrue, setHoverTrue] = React.useState<boolean>(false);
+  const [hoverFalse, setHoverFalse] = React.useState<boolean>(false);
 
   React.useEffect(() => {
     setCircleData(generateCircleData(150))
@@ -290,7 +293,7 @@ export function DemoMLPTraining() {
 
         <Block marginLeft={['0', '0', '30px']} flex="1">
           <H2>Training Loss History</H2>
-          <Block height="440px" $style={{ fontFamily: 'monospace' }}>
+          <Block height="440px" $style={{ fontFamily: 'monospace' }} width='100%'>
             <LossChart data={lossChartData} />
           </Block>
         </Block>
@@ -302,21 +305,24 @@ export function DemoMLPTraining() {
         flexDirection={['column', 'column', 'row']}
       >
         <Block marginRight={['0', '0', '30px']}>
-          <Block marginBottom="40px">
-            <H2>Legend</H2>
-            <MonoLabelLarge>
-              <Block display="flex" width='auto' flexDirection={'column'}>
-                <Block display="flex">
-                  <div style={{backgroundColor: 'rgba(0, 255, 0, 0.5)', width: '20px', height: '20px', marginRight: '10px'}}/>
-                  <div>True (1)</div>
-                </Block>
-                <Block display="flex">
-                  <div style={{backgroundColor: 'rgba(255, 0, 0, 0.5)', width: '20px', height: '20px', marginRight: '10px'}}/>
-                  <div>False (-1)</div>
-                </Block>
-              </Block>
-            </MonoLabelLarge>
-          </Block>
+          <LegendLayout legend={[
+            {
+              text: 'True (1)',
+              standardColor: 'rgba(0, 255, 0, 0.2)',
+              hovered: hoverTrue,
+              hoverColor: 'rgba(0, 255, 0, 0.5)',
+              onMouseEnter: () => setHoverTrue(true),
+              onMouseLeave: () => setHoverTrue(false),
+            },
+            {
+              text: 'False (-1)',
+              standardColor: 'rgba(255, 0, 0, 0.2)',
+              hovered: hoverFalse,
+              hoverColor: 'rgba(255, 0, 0, 0.5)',
+              onMouseEnter: () => setHoverFalse(true),
+              onMouseLeave: () => setHoverFalse(false),
+            },
+          ]}/>
           <Block>
             <H2>Final Predictions</H2>
             <Table
@@ -330,24 +336,9 @@ export function DemoMLPTraining() {
         </Block>
 
         <Block marginLeft={['0', '0', '30px']} flex="1">
-          <H2>Training Loss History</H2>
+          <H2>Data Visualization</H2>
           <Block height="440px" $style={{ fontFamily: 'monospace' }}>
-            <LossChart data={lossChartData} />
-          </Block>
-        </Block>
-      </Block>
-
-      <H2>Data Visualization</H2>
-      <Block marginBottom="40px" display="flex">
-        <Block height="440px" $style={{fontFmaily: 'monospace'}}>
-          <Suspense>
             <MoonChart data={data} labels={circleData.labels}></MoonChart>
-          </Suspense>
-          <Block justifyContent='space-evenly' display="flex"> 
-            <Button>Moon Data</Button>
-            <Button>Circle Data</Button>
-            <Button>Spiral Data</Button>
-
           </Block>
         </Block>
       </Block>
