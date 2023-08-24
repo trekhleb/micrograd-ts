@@ -194,7 +194,7 @@ export function DemoMLPTraining() {
           <Block display="flex" flexDirection={'column'} flex="1" marginRight={['0px', '0px', '10px']}>
             <FormControl
               label={() => 'Data Points'}
-              caption={<CaptionBlock text={'Defines how many points are generated on the scatterplot'}/>
+              caption={<CaptionBlock text={'Scatterplot points generated'}/>
               }
             >
               <Input
@@ -209,7 +209,7 @@ export function DemoMLPTraining() {
           <Block flex="1" flexDirection={'column'} width="100%" marginLeft={['0px', '0px', '10px']}>
             <FormControl
               label={() => 'Learning Rate'}
-              caption={<CaptionBlock text='Defines how big should be the gradient convergence step'/>}
+              caption={<CaptionBlock text='Gradient convergence step size'/>}
             >
               <Input
                 value={learningRateRaw}
@@ -220,7 +220,7 @@ export function DemoMLPTraining() {
           <Block flex="1" flexDirection={'column'} justifyContent={['center']} marginLeft={['0px', '0px', '10px']}>
             <FormControl
               label={() => 'Layer Dimensions'}
-              caption={<CaptionBlock text='Defines number of layers following the input'/>}
+              caption={<CaptionBlock text='Neuron layers following the input layer'/>}
             >
               <Select
                 options={dimensionOptions}
@@ -272,59 +272,7 @@ export function DemoMLPTraining() {
         </Block>
       </Block>
 
-      <H2>Moon Data Training Parameters</H2>
-      <Block>
-        <Block marginBottom="40px" display="flex" flexDirection={['column', 'column', 'row']}>
-          <Block flex="1" marginRight={['0px', '0px', '10px']}>
-            <FormControl
-              label={() => 'Data Points'}
-              caption={() =>
-                'Number of random data points generated'
-              }
-            >
-              <Input
-                type="number" 
-                min={0}
-                value={dataPointsRaw}
-                onChange={(e) => setDataPoints(e.target.value)}
-              />
-            </FormControl>
-          </Block>
-
-          <Block flex="1" marginLeft={['0px', '0px', '10px']}>
-            <FormControl
-              label={() => 'Learning Rate'}
-              caption={() =>
-                'Defines how big should be the gradient convergence step'
-              }
-            >
-              <Input
-                value={learningRateRaw}
-                onChange={(e) => setLearningRate(e.target.value)}
-              />
-            </FormControl>
-          </Block>
-          <Block flex="1" marginLeft={['0px', '0px', '10px']}>
-            <FormControl
-              label={() => 'Network Dimensions'}
-              caption={() =>
-                'Defines number of layers following the input'
-              }
-            >
-              <Select
-                options={dimensionOptions}
-                value={dimString}
-                placeholder={'Choose network dimensions'}
-                onChange={params => setDimString(params.value)}
-                
-                
-                >
-
-              </Select>
-            </FormControl>
-          </Block>
-        </Block>
-      </Block>
+      <H2>Data Visualization</H2>
       <Block marginBottom="40px" display="flex">
         <Block height="440px" $style={{fontFmaily: 'monospace'}}>
           <MoonChart data={data}></MoonChart>
