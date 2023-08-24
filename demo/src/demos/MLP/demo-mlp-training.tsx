@@ -19,6 +19,8 @@ import { LossChart } from '../../components/loss-chart'
 import { toFloat, toInt } from '../../utils/numbers'
 import { generateCircleData } from './dataUtils'
 import { MoonChart } from '../../components/MoonData'
+import { Select } from 'baseui/select'
+import { CaptionBlock } from '../../components/CaptionBlock'
 
 // Create a training dataset with 4 entries.
 // Each dataset entry consists of 3 inputs (features).
@@ -40,6 +42,13 @@ export function DemoMLPTraining() {
     0.2
   )
 
+  const dimensionOptions = [
+    {label: '[4, 4, 1]', id: 1},
+    {label: '[16, 1]', id: 2},
+  ]
+  const [dimString, setDimString] = React.useState([dimensionOptions[0]]);
+  const [neuronDimensions, setNeuronDimensions] = React.useState([4, 4, 1]);
+
   const [dataPointsRaw, setDataPoints] = React.useState<number | string>(150);
 
   const [losses, setLosses] = React.useState<number[]>([])
@@ -55,7 +64,7 @@ export function DemoMLPTraining() {
     // - 1st layer of 4 neurons
     // - 2nd layer of 4 neurons
     // - 1 output
-    const mlp = new MLP(3, [4, 4, 1])
+    const mlp = new MLP(3, neuronDimensions)
 
     const lossHistory: number[] = []
 
@@ -97,6 +106,14 @@ export function DemoMLPTraining() {
       trainCallback()
     }
   }, [trainCallback, losses])
+
+  React.useEffect(() => {
+    if (dimString[0].label === '[4, 4, 1]') {
+      setNeuronDimensions([4, 4, 1]);
+    } else {
+      setNeuronDimensions([16, 1])
+    }
+  }, [dimString])
 
   const lossChartData: Serie[] = [
     {
@@ -161,12 +178,10 @@ export function DemoMLPTraining() {
       <H2>Training Parameters</H2>
       <Block>
         <Block display="flex" flexDirection={['column', 'column', 'row']}>
-          <Block flex="1" marginRight={['0px', '0px', '10px']}>
+          <Block display="flex" flexDirection={'column'} flex="1" marginRight={['0px', '0px', '10px']}>
             <FormControl
               label={() => 'Epochs'}
-              caption={() =>
-                'For how many iterations we plan to train the network'
-              }
+              caption={<CaptionBlock text={'Network training iterations'}/>}
             >
               <Input
                 type="number"
@@ -176,13 +191,25 @@ export function DemoMLPTraining() {
               />
             </FormControl>
           </Block>
+          <Block display="flex" flexDirection={'column'} flex="1" marginRight={['0px', '0px', '10px']}>
+            <FormControl
+              label={() => 'Data Points'}
+              caption={<CaptionBlock text={'Defines how many points are generated on the scatterplot'}/>
+              }
+            >
+              <Input
+                type="number" 
+                min={0}
+                value={dataPointsRaw}
+                onChange={(e) => setDataPoints(e.target.value)}
+              />
+            </FormControl>
+          </Block>
 
-          <Block flex="1" marginLeft={['0px', '0px', '10px']}>
+          <Block flex="1" flexDirection={'column'} width="100%" marginLeft={['0px', '0px', '10px']}>
             <FormControl
               label={() => 'Learning Rate'}
-              caption={() =>
-                'Defines how big should be the gradient convergence step'
-              }
+              caption={<CaptionBlock text='Defines how big should be the gradient convergence step'/>}
             >
               <Input
                 value={learningRateRaw}
@@ -190,8 +217,21 @@ export function DemoMLPTraining() {
               />
             </FormControl>
           </Block>
+          <Block flex="1" flexDirection={'column'} justifyContent={['center']} marginLeft={['0px', '0px', '10px']}>
+            <FormControl
+              label={() => 'Layer Dimensions'}
+              caption={<CaptionBlock text='Defines number of layers following the input'/>}
+            >
+              <Select
+                options={dimensionOptions}
+                value={dimString}
+                placeholder={'Choose network dimensions'}
+                onChange={params => setDimString(params.value)}
+                >
+              </Select>
+            </FormControl>
+          </Block>
         </Block>
-
         <Button
           startEnhancer={() => <GiWeightLiftingUp />}
           onClick={trainCallback}
@@ -266,15 +306,21 @@ export function DemoMLPTraining() {
           </Block>
           <Block flex="1" marginLeft={['0px', '0px', '10px']}>
             <FormControl
-              label={() => 'Learning Rate'}
+              label={() => 'Network Dimensions'}
               caption={() =>
-                'Defines how big should be the gradient convergence step'
+                'Defines number of layers following the input'
               }
             >
-              <Input
-                value={learningRateRaw}
-                onChange={(e) => setLearningRate(e.target.value)}
-              />
+              <Select
+                options={dimensionOptions}
+                value={dimString}
+                placeholder={'Choose network dimensions'}
+                onChange={params => setDimString(params.value)}
+                
+                
+                >
+
+              </Select>
             </FormControl>
           </Block>
         </Block>
