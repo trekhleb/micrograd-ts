@@ -25,3 +25,4 @@ export const generateCircleData = (n: number): Data => {
     labels
   }
 }
+

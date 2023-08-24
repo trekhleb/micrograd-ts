@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React, { Suspense, useMemo } from 'react'
 import { Block } from 'baseui/block'
 import { FormControl } from 'baseui/form-control'
 import { Button } from 'baseui/button'
@@ -36,6 +36,11 @@ const xs = [
 // Here we're saying that with the xs[i] input we expect the network to have y[i] in the output.
 const ys = [v(1), v(-1), v(-1), v(1)]
 
+interface Data {
+  data: number[][];
+  labels: number[];
+}
+
 export function DemoMLPTraining() {
   const [epochsRaw, setEpochs] = React.useState<number | string>(30)
   const [learningRateRaw, setLearningRate] = React.useState<number | string>(
@@ -57,6 +62,20 @@ export function DemoMLPTraining() {
   const epochs = toInt(epochsRaw, 0)
   const learningRate = toFloat(learningRateRaw, 0)
   const dataPoints = toInt(dataPointsRaw, 0);
+
+  const circleWorker = new Worker('circleWorker.js');
+  const [circleData, setCircleData] = React.useState<Data>({data: [], labels: []});
+
+  React.useEffect(() => {
+    circleWorker.onmessage = (event: MessageEvent<Data>) => {
+      setCircleData(event.data);
+    }
+    circleWorker.postMessage(dataPoints);
+
+    return () => {
+      circleWorker.terminate();
+    }
+  }, [dataPoints])
 
   const trainCallback = React.useCallback(() => {
     // Create a Multi Layer Perceptron (MLP) network.
@@ -128,12 +147,12 @@ export function DemoMLPTraining() {
   ]
 
   console.log('test');
-  const circle = useMemo(() => generateCircleData(dataPoints), [dataPoints]);
+  
 
   const data: ScatterPlotRawSerie<ScatterPlotDatum>[] = [
     {
       id: 'circle_data',
-      data: circle.data.map((datum, idx) => {
+      data: circleData.data.map((datum, idx) => {
         return {
           x: datum[0],
           y: datum[1]
@@ -200,6 +219,7 @@ export function DemoMLPTraining() {
               <Input
                 type="number" 
                 min={0}
+                max={1000}
                 value={dataPointsRaw}
                 onChange={(e) => setDataPoints(e.target.value)}
               />
@@ -253,7 +273,7 @@ export function DemoMLPTraining() {
             </MonoLabelLarge>
           </Block>
           <Block>
-            <H2>Predictions</H2>
+            <H2>Final Predictions</H2>
             <Table
               columns={['Expected', 'Predicted']}
               data={ys.map((y, trainingEntryIndex) => [
@@ -275,7 +295,9 @@ export function DemoMLPTraining() {
       <H2>Data Visualization</H2>
       <Block marginBottom="40px" display="flex">
         <Block height="440px" $style={{fontFmaily: 'monospace'}}>
-          <MoonChart data={data}></MoonChart>
+          <Suspense>
+            <MoonChart data={data}></MoonChart>
+          </Suspense>
           <Block justifyContent='space-evenly' display="flex"> 
             <Button>Moon Data</Button>
             <Button>Circle Data</Button>
@@ -313,6 +335,7 @@ for (let epoch = 1; epoch <= epochs; epoch++) {
   // Forward pass
   const ypred: Value[] = []
   for (const x of xs) {
+    //Push 1st dimension of 1d output at index 0.
     ypred.push(mlp.forward(x)[0])
   }
 

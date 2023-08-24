@@ -72,6 +72,7 @@ export class MLP extends Module {
   forward(xin: Value[]): Value[] {
     let xout = [...xin]
     for (const layer of this.layers) xout = layer.forward(xout)
+    console.log(xout[0]);
     return xout
   }
 
