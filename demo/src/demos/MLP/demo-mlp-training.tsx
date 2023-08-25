@@ -38,8 +38,8 @@ import { LegendLayout } from '../../components/LegendLayout'
 const ys = [v(1), v(-1), v(-1), v(1)]
 
 interface Data {
-  data: number[][];
-  labels: number[];
+  data: number[][]
+  labels: number[]
 }
 
 export function DemoMLPTraining() {
@@ -52,37 +52,38 @@ export function DemoMLPTraining() {
     {label: '[4, 4, 1]', id: 1},
     {label: '[16, 1]', id: 2},
   ]
-  const [dimString, setDimString] = React.useState([dimensionOptions[0]]);
-  const [neuronDimensions, setNeuronDimensions] = React.useState([4, 4, 1]);
+  const [dimString, setDimString] = React.useState([dimensionOptions[0]])
+  const [neuronDimensions, setNeuronDimensions] = React.useState([4, 4, 1])
 
-  const [dataPointsRaw, setDataPoints] = React.useState<number | string>(150);
+  const [dataPointsRaw, setDataPoints] = React.useState<number | string>(150)
 
   const [losses, setLosses] = React.useState<number[]>([])
   const [predictions, setPredictions] = React.useState<number[]>([])
 
   const epochs = toInt(epochsRaw, 0)
   const learningRate = toFloat(learningRateRaw, 0)
-  const dataPoints = toInt(dataPointsRaw, 0);
+  const dataPoints = toInt(dataPointsRaw, 0)
 
-  const [circleData, setCircleData] = React.useState<Data>({data: [], labels: []});
-  const [hoverTrue, setHoverTrue] = React.useState<boolean>(false);
-  const [hoverFalse, setHoverFalse] = React.useState<boolean>(false);
+  const [circleData, setCircleData] = React.useState<Data>({data: [], labels: []})
+  const [hoverTrue, setHoverTrue] = React.useState<boolean>(false)
+  const [hoverFalse, setHoverFalse] = React.useState<boolean>(false)
 
   React.useEffect(() => {
     setCircleData(generateCircleData(150))
-  }, []);
+  }, [])
   
-  const circleDataValues = React.useMemo(() => convertDataToValue(circleData), [circleData]);
+  //Dynamically generate training dataset
+  const circleDataValues = React.useMemo(() => convertDataToValue(circleData), [circleData])
 
   React.useEffect(() => {
-    const circleWorker = new Worker('circleWorker.js');
+    const circleWorker = new Worker('circleWorker.js')
     circleWorker.onmessage = (event: MessageEvent<Data>) => {
-      setCircleData(event.data);
+      setCircleData(event.data)
     }
-    circleWorker.postMessage(dataPoints);
+    circleWorker.postMessage(dataPoints)
 
     return () => {
-      circleWorker.terminate();
+      circleWorker.terminate()
     }
   }, [dataPoints])
 
@@ -92,7 +93,7 @@ export function DemoMLPTraining() {
     // - 1st layer of 4 neurons
     // - 2nd layer of 4 neurons
     // - 1 output
-    const mlp = new MLP(3, neuronDimensions)
+    const mlp = new MLP(2, neuronDimensions)
 
     const lossHistory: number[] = []
 
@@ -137,7 +138,7 @@ export function DemoMLPTraining() {
 
   React.useEffect(() => {
     if (dimString[0].label === '[4, 4, 1]') {
-      setNeuronDimensions([4, 4, 1]);
+      setNeuronDimensions([4, 4, 1])
     } else {
       setNeuronDimensions([16, 1])
     }
@@ -278,63 +279,47 @@ export function DemoMLPTraining() {
               {(losses[losses.length - 1] || 0).toFixed(4)}
             </MonoLabelLarge>
           </Block>
+          <Block marginRight={['0', '0', '30px']} flex={1}>
+            <LegendLayout legend={[
+              {
+                text: 'True (1)',
+                standardColor: 'rgba(0, 255, 0, 0.2)',
+                hovered: hoverTrue,
+                hoverColor: 'rgba(0, 255, 0, 0.5)',
+                onMouseEnter: () => setHoverTrue(true),
+                onMouseLeave: () => setHoverTrue(false),
+              },
+              {
+                text: 'False (-1)',
+                standardColor: 'rgba(255, 0, 0, 0.2)',
+                hovered: hoverFalse,
+                hoverColor: 'rgba(255, 0, 0, 0.5)',
+                onMouseEnter: () => setHoverFalse(true),
+                onMouseLeave: () => setHoverFalse(false),
+              },
+            ]}/>
+          </Block>
           <Block>
             <H2>Final Predictions</H2>
             <Table
-              columns={['Expected', 'Predicted']}
-              data={ys.map((y, trainingEntryIndex) => [
+              columns={['x','y','Label', 'Predict']}
+              data={circleDataValues.labelValues.slice(-10).map((y, trainingEntryIndex) => [
+                circleData.data[circleData.data.length - (10 + trainingEntryIndex) - 1][0].toFixed(2),
+                circleData.data[circleData.data.length - (10 + trainingEntryIndex) - 1][1].toFixed(2),
                 y.data,
-                predictions[trainingEntryIndex]?.toFixed(4),
+                predictions[predictions.length - (10 + trainingEntryIndex) - 1]?.toFixed(4),
               ])}
             />
           </Block>
+          
+          
         </Block>
 
-        <Block marginLeft={['0', '0', '30px']} flex="1">
+        <Block marginLeft={['0', '0', '30px']} flex="1" display={'flex'} flexDirection={'column'}>
           <H2>Training Loss History</H2>
           <Block height="440px" $style={{ fontFamily: 'monospace' }} width='100%'>
             <LossChart data={lossChartData} />
           </Block>
-        </Block>
-      </Block>
-
-      <Block
-        marginBottom="0px"
-        display="flex"
-        flexDirection={['column', 'column', 'row']}
-      >
-        <Block marginRight={['0', '0', '30px']}>
-          <LegendLayout legend={[
-            {
-              text: 'True (1)',
-              standardColor: 'rgba(0, 255, 0, 0.2)',
-              hovered: hoverTrue,
-              hoverColor: 'rgba(0, 255, 0, 0.5)',
-              onMouseEnter: () => setHoverTrue(true),
-              onMouseLeave: () => setHoverTrue(false),
-            },
-            {
-              text: 'False (-1)',
-              standardColor: 'rgba(255, 0, 0, 0.2)',
-              hovered: hoverFalse,
-              hoverColor: 'rgba(255, 0, 0, 0.5)',
-              onMouseEnter: () => setHoverFalse(true),
-              onMouseLeave: () => setHoverFalse(false),
-            },
-          ]}/>
-          <Block>
-            <H2>Final Predictions</H2>
-            <Table
-              columns={['Expected', 'Predicted']}
-              data={ys.map((y, trainingEntryIndex) => [
-                y.data,
-                predictions[trainingEntryIndex]?.toFixed(4),
-              ])}
-            />
-          </Block>
-        </Block>
-
-        <Block marginLeft={['0', '0', '30px']} flex="1">
           <H2>Data Visualization</H2>
           <Block height="440px" $style={{ fontFamily: 'monospace' }}>
             <MoonChart data={data} labels={circleData.labels}></MoonChart>
@@ -344,32 +329,32 @@ export function DemoMLPTraining() {
 
       <Code
         code={`
-// Create a training dataset with 4 entries.
-// Each dataset entry consists of 3 inputs (features).
-const xs = [
-  [v(2), v(3), v(-1)],
-  [v(3), v(-1), v(0.5)],
-  [v(0.5), v(1), v(1)],
-  [v(1), v(1), v(-1)],
+// Dynamically create a training dataset.
+// Each dataset entry consists of 2 inputs (features).
+const points = generateData(150)
+
+points.data == [
+  [v(2), v(3)],
+  [v(4), v(7)],
+  ...points.data
 ]
 
-// Create training labels.
 // One label for each dataset entry.
-// Here we're saying that with the xs[i] input we expect the network to have y[i] in the output.
-const ys = [v(1), v(-1), v(-1), v(1)]
+// Here we're saying that with the points.data[i] input we expect the network to have points.labels[i] in the output.
+points.labels == [v(1), v(-1), v(1), ...points.labels]
 
 // Create a Multi Layer Perceptron (MLP) network.
-// - 3 inputs
+// - 2 inputs
 // - 1st layer of 4 neurons
 // - 2nd layer of 4 neurons
 // - 1 output
-const mlp = new MLP(3, [4, 4, 1])
+const mlp = new MLP(2, [4, 4, 1])
 
 // Run training loops for a specified number of epochs.
 for (let epoch = 1; epoch <= epochs; epoch++) {
   // Forward pass
   const ypred: Value[] = []
-  for (const x of xs) {
+  for (const x of points.data) {
     //Push 1st dimension of 1d output at index 0.
     ypred.push(mlp.forward(x)[0])
   }
@@ -377,8 +362,8 @@ for (let epoch = 1; epoch <= epochs; epoch++) {
   // Calculate loss
   // Mean square error loss function.
   let loss = v(0)
-  for (let i = 0; i < ys.length; i++) {
-    loss = loss.add(ys[i].sub(ypred[i]).pow(2))
+  for (let i = 0; i < points.labels.length; i++) {
+    loss = loss.add(points.labels[i].sub(ypred[i]).pow(2))
   }
   loss = loss.div(ys.length)
 

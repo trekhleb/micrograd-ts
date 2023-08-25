@@ -1,4 +1,5 @@
 self.onmessage = (event) => {
+  //Define function
   const generateCircleData = (n) => {
     const data = [];
     const labels = [];
@@ -20,8 +21,16 @@ self.onmessage = (event) => {
     }
   }
 
+  //Generate data
   const numDataPoints = event.data;
-  const result = generateCircleData(numDataPoints);
+  let result = generateCircleData(numDataPoints);
+
+  //Shuffle result
+  /*for (let i = result.data.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [result.data[i], result.data[j]] = [result.data[j], result.data[i]];
+    [result.labels[i], result.labels[j]] = [result.labels[j], result.labels[i]]
+  } */
   self.postMessage(result);
 }
 
