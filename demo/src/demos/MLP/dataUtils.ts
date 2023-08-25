@@ -1,6 +1,13 @@
+import { Value, v } from "../../../../micrograd/engine";
+
 interface Data {
   data: number[][];
   labels: number[];
+}
+
+interface DataValues {
+  dataValues: Value[][],
+  labelValues: Value[],
 }
 
 
@@ -19,10 +26,30 @@ export const generateCircleData = (n: number): Data => {
     data.push([r * Math.sin(t), r * Math.cos(t)]);
     labels.push(-1);
   }
-  console.log([data, labels]);
   return {
     data, 
     labels
   }
+}
+
+export const convertDataToValue = (data: Data): DataValues => {
+  const dataValues = data.data.map((dat)=> {
+    return dat.map((d) => {
+      return v(d);
+    })
+  })
+  const labelValues = data.labels.map((label) => {
+    return v(label);
+  })
+  console.log("Converted");
+  console.log({
+    dataValues: dataValues,
+    labelValues: labelValues
+  });
+  return {
+    dataValues,
+    labelValues,
+  }
+  
 }
 

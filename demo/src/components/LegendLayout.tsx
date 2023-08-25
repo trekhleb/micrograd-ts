@@ -22,7 +22,7 @@ export const LegendLayout = ({legend}: LegendLayoutProps) => {
       <MonoLabelLarge>
         <Block display="flex" width='auto' flexDirection={'column'}>
           {legend.map((li) => (
-            <Block display="flex">
+            <Block display="flex" key={`legend_${li.text}`}>
               <div 
                 style={{
                   backgroundColor: li.hovered ? li.hoverColor : li.standardColor,

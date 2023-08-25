@@ -14,7 +14,6 @@ self.onmessage = (event) => {
       data.push([r * Math.sin(t), r * Math.cos(t)]);
       labels.push(-1);
     }
-    console.log([data, labels]);
     return {
       data, 
       labels

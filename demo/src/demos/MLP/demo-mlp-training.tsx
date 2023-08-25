@@ -1,4 +1,4 @@
-import React, { Suspense, useMemo } from 'react'
+import React from 'react'
 import { Block } from 'baseui/block'
 import { FormControl } from 'baseui/form-control'
 import { Button } from 'baseui/button'
@@ -17,7 +17,7 @@ import { CodeLinks } from '../../components/code-links'
 import { H2 } from '../../components/h2'
 import { LossChart } from '../../components/loss-chart'
 import { toFloat, toInt } from '../../utils/numbers'
-import { generateCircleData } from './dataUtils'
+import { convertDataToValue, generateCircleData } from './dataUtils'
 import { MoonChart } from '../../components/MoonData'
 import { Select } from 'baseui/select'
 import { CaptionBlock } from '../../components/CaptionBlock'
@@ -25,12 +25,12 @@ import { LegendLayout } from '../../components/LegendLayout'
 
 // Create a training dataset with 4 entries.
 // Each dataset entry consists of 3 inputs (features).
-const xs = [
+/*const xs = [
   [v(2), v(3), v(-1)],
   [v(3), v(-1), v(0.5)],
   [v(0.5), v(1), v(1)],
   [v(1), v(1), v(-1)],
-]
+] */
 
 // Create training labels.
 // One label for each dataset entry.
@@ -64,7 +64,6 @@ export function DemoMLPTraining() {
   const learningRate = toFloat(learningRateRaw, 0)
   const dataPoints = toInt(dataPointsRaw, 0);
 
-  const circleWorker = new Worker('circleWorker.js');
   const [circleData, setCircleData] = React.useState<Data>({data: [], labels: []});
   const [hoverTrue, setHoverTrue] = React.useState<boolean>(false);
   const [hoverFalse, setHoverFalse] = React.useState<boolean>(false);
@@ -72,8 +71,11 @@ export function DemoMLPTraining() {
   React.useEffect(() => {
     setCircleData(generateCircleData(150))
   }, []);
+  
+  const circleDataValues = React.useMemo(() => convertDataToValue(circleData), [circleData]);
 
   React.useEffect(() => {
+    const circleWorker = new Worker('circleWorker.js');
     circleWorker.onmessage = (event: MessageEvent<Data>) => {
       setCircleData(event.data);
     }
@@ -98,17 +100,17 @@ export function DemoMLPTraining() {
     for (let epoch = 1; epoch <= epochs; epoch++) {
       // Forward pass
       const ypred: Value[] = []
-      for (const x of xs) {
+      for (const x of circleDataValues.dataValues) {
         ypred.push(mlp.forward(x)[0])
       }
 
       // Calculate loss
       // Mean square error loss function.
       let loss = v(0)
-      for (let i = 0; i < ys.length; i++) {
-        loss = loss.add(ys[i].sub(ypred[i]).pow(2))
+      for (let i = 0; i < circleDataValues.labelValues.length; i++) {
+        loss = loss.add(circleDataValues.labelValues[i].sub(ypred[i]).pow(2))
       }
-      loss = loss.div(ys.length)
+      loss = loss.div(circleDataValues.labelValues.length)
       lossHistory.push(loss.data)
 
       // Backward pass
@@ -124,7 +126,7 @@ export function DemoMLPTraining() {
       setPredictions(ypred.map((out) => out.data))
     }
     setLosses([...lossHistory])
-  }, [epochs, learningRate])
+  }, [epochs, learningRate, circleData])
 
   React.useEffect(() => {
     if (losses.length === 0) {
@@ -153,13 +155,10 @@ export function DemoMLPTraining() {
     },
   ]
 
-  console.log('test');
-  
-
   const data: ScatterPlotRawSerie<ScatterPlotDatum>[] = [
     {
       id: 'circle_data',
-      data: circleData.data.map((datum, idx) => {
+      data: circleData.data.map((datum) => {
         return {
           x: datum[0],
           y: datum[1]

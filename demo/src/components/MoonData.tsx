@@ -7,7 +7,6 @@ type MoonChartProps = {
 
 export const MoonChart = (props: MoonChartProps) => {
   const { data, labels } = props
-  console.log(data)
 
   return (
     <ResponsiveScatterPlot
@@ -30,6 +29,7 @@ export const MoonChart = (props: MoonChartProps) => {
               {data[0].data.map((val, idx) => {
                 return (
                   <rect
+                    key={`plot_highlight_${idx}`}
                     x={props.xScale((val.x as number) - 0.13)}
                     y={props.yScale((val.y as number) + 0.3)}
                     width={10}
