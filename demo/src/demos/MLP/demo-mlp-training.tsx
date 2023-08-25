@@ -365,7 +365,7 @@ for (let epoch = 1; epoch <= epochs; epoch++) {
   for (let i = 0; i < points.labels.length; i++) {
     loss = loss.add(points.labels[i].sub(ypred[i]).pow(2))
   }
-  loss = loss.div(ys.length)
+  loss = loss.div(points.labels.length)
 
   // Backward pass
   // Stochastic gradient descent update
