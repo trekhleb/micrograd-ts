@@ -35,6 +35,7 @@ export function DemoMLPTraining() {
   )
 
   const [startTraining, setStartTraining] = React.useState<boolean>(false);
+  const [dataLoaded, setDataLoaded] = React.useState<boolean>(true);
 
   const dimensionOptions = [
     {label: '[4, 4, 1]', id: 1},
@@ -62,13 +63,19 @@ export function DemoMLPTraining() {
   }, [])
   
   //Dynamically generate training dataset
-  const circleDataValues = React.useMemo(() => convertDataToValue(circleData), [circleData])
+  const circleDataValues = React.useMemo(() => {
+    const vals = convertDataToValue(circleData)
+    setDataLoaded(true);
+    return vals;
+  }, [circleData])
 
   React.useEffect(() => {
     const circleWorker = new Worker('circleWorker.js')
+    setDataLoaded(false);
     circleWorker.onmessage = (event: MessageEvent<Data>) => {
       setCircleData(event.data)
     }
+    console.log(dataPoints);
     circleWorker.postMessage(dataPoints)
 
     return () => {
@@ -129,7 +136,7 @@ export function DemoMLPTraining() {
       }
     }
     setTestPredictions(newTestPredictions);
-  }, [epochs, learningRate, circleData, neuronDimensions])
+  }, [epochs, learningRate, circleDataValues, circleData, neuronDimensions])
 
   React.useEffect(() => {
     if (losses.length === 0) {
@@ -308,31 +315,31 @@ export function DemoMLPTraining() {
             <H2>Final Predictions</H2>
             <Table
               columns={['x','y','Label', 'Predict']}
-              data={circleDataValues.labelValues.slice(-10).map((y, trainingEntryIndex) => [
-                circleData.data[circleData.data.length - (10 + trainingEntryIndex) - 1][0].toFixed(2),
-                circleData.data[circleData.data.length - (10 + trainingEntryIndex) - 1][1].toFixed(2),
-                y.data,
-                trainingPredictions[trainingPredictions.length - (10 + trainingEntryIndex) - 1]?.toFixed(4),
-              ])}
+              data={dataLoaded && circleDataValues && circleDataValues.labelValues && circleDataValues.labelValues.length >= 10 ? circleDataValues.labelValues.slice(0, 10).map((y, trainingEntryIndex) => {
+                return [
+                  circleData.data[trainingEntryIndex][0].toFixed(2),
+                  circleData.data[trainingEntryIndex][1].toFixed(2),
+                  y.data,
+                  trainingPredictions[trainingEntryIndex].toFixed(4),
+                ]
+              }) : [['Load...', 'Load...', 'Load...', 'Load...']]}
             />
           </Block>
-          
-          
         </Block>
 
         <Block marginLeft={['0', '0', '30px']} flex="1" display={'flex'} flexDirection={'column'}>
+          <H2>{`Data Visualization ${startTraining ? '(Predicted)' : '(Actual)'}`}</H2>
+            <Block height="440px" $style={{ fontFamily: 'monospace' }}>
+              <MoonChart 
+                data={data} 
+                labels={circleData.labels}
+                trainingStarted={startTraining}
+                predictionData={testPredictions ? testPredictions : []}
+              />
+            </Block>
           <H2>Training Loss History</H2>
           <Block height="440px" $style={{ fontFamily: 'monospace' }} width='100%'>
             <LossChart data={lossChartData} />
-          </Block>
-          <H2>{`Data Visualization ${startTraining ? '(Predicted)' : '(Actual)'}`}</H2>
-          <Block height="440px" $style={{ fontFamily: 'monospace' }}>
-            <MoonChart 
-              data={data} 
-              labels={circleData.labels}
-              trainingStarted={startTraining}
-              predictionData={testPredictions}
-            />
           </Block>
         </Block>
       </Block>

@@ -9,7 +9,7 @@ export interface RectDrawInfo {
 
 interface MoonChartProps {
   data: ScatterPlotRawSerie<ScatterPlotDatum>[],
-  predictionData: RectDrawInfo[],
+  predictionData?: RectDrawInfo[],
   labels: number[],
   trainingStarted: boolean
 }
@@ -32,7 +32,7 @@ export const MoonChart = ({data, labels, predictionData, trainingStarted}: MoonC
         'legends',
         (props: any) => {
           const arr = [-2, -1.9, -1.8, -1.7, -1.6, -1.5, -1.4, -1.3, -1.2, -1.1, -1.0];
-          if (trainingStarted) {
+          if (trainingStarted && predictionData) {
             return (
               <>
                 {predictionData.map((data, idx) => {

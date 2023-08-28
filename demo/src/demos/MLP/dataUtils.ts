@@ -10,8 +10,9 @@ interface DataValues {
   labelValues: Value[],
 }
 
-
-export const generateCircleData = (n: number): Data => {
+export const generateCircleData = (
+  n: number, 
+): Data => {
   const data = [];
   const labels = [];
   for (let i = 0; i < n / 2; i++) {
@@ -41,11 +42,6 @@ export const convertDataToValue = (data: Data): DataValues => {
   const labelValues = data.labels.map((label) => {
     return v(label);
   })
-  console.log("Converted");
-  console.log({
-    dataValues: dataValues,
-    labelValues: labelValues
-  });
   return {
     dataValues,
     labelValues,
