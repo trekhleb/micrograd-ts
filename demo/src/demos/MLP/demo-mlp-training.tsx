@@ -19,7 +19,6 @@ import { LossChart } from '../../components/loss-chart'
 import { toFloat, toInt } from '../../utils/numbers'
 import { convertDataToValue, generateCircleData } from './dataUtils'
 import { MoonChart, RectDrawInfo } from '../../components/MoonData'
-import { Select } from 'baseui/select'
 import { CaptionBlock } from '../../components/CaptionBlock'
 import { LegendLayout } from '../../components/LegendLayout'
 
@@ -36,13 +35,6 @@ export function DemoMLPTraining() {
 
   const [startTraining, setStartTraining] = React.useState<boolean>(false);
   const [dataLoaded, setDataLoaded] = React.useState<boolean>(true);
-
-  const dimensionOptions = [
-    {label: '[4, 4, 1]', id: 1},
-    {label: '[16, 1]', id: 2},
-  ]
-  const [dimString, setDimString] = React.useState([dimensionOptions[0]])
-  const [neuronDimensions, setNeuronDimensions] = React.useState([4, 4, 1])
 
   const [dataPointsRaw, setDataPoints] = React.useState<number | string>(150)
 
@@ -90,7 +82,7 @@ export function DemoMLPTraining() {
     // - 2nd layer of 4 neurons
     // - 1 output
     setStartTraining(true);
-    const mlp = new MLP(2, neuronDimensions)
+    const mlp = new MLP(2, [4, 4, 1])
 
     const lossHistory: number[] = []
 
@@ -136,7 +128,7 @@ export function DemoMLPTraining() {
       }
     }
     setTestPredictions(newTestPredictions);
-  }, [epochs, learningRate, circleDataValues, circleData, neuronDimensions])
+  }, [epochs, learningRate, circleDataValues, circleData])
 
   React.useEffect(() => {
     if (losses.length === 0) {
@@ -144,14 +136,6 @@ export function DemoMLPTraining() {
       trainCallback()
     }
   }, [trainCallback, losses])
-
-  React.useEffect(() => {
-    if (dimString[0].label === '[4, 4, 1]') {
-      setNeuronDimensions([4, 4, 1])
-    } else {
-      setNeuronDimensions([16, 1])
-    }
-  }, [dimString])
 
   const lossChartData: Serie[] = [
     {
@@ -254,20 +238,6 @@ export function DemoMLPTraining() {
                 value={learningRateRaw}
                 onChange={(e) => setLearningRate(e.target.value)}
               />
-            </FormControl>
-          </Block>
-          <Block flex="1" flexDirection={'column'} justifyContent={['center']} marginLeft={['0px', '0px', '10px']}>
-            <FormControl
-              label={() => 'Layer Dimensions'}
-              caption={<CaptionBlock text='Neuron layers following the input layer'/>}
-            >
-              <Select
-                options={dimensionOptions}
-                value={dimString}
-                placeholder={'Choose network dimensions'}
-                onChange={params => setDimString(params.value)}
-                >
-              </Select>
             </FormControl>
           </Block>
         </Block>

@@ -1,5 +1,4 @@
-import { ScatterPlot, ScatterPlotRawSerie, ScatterPlotDatum, ResponsiveScatterPlot} from '@nivo/scatterplot'
-import { Value } from '../../../micrograd/engine'
+import {ScatterPlotRawSerie, ScatterPlotDatum, ResponsiveScatterPlot} from '@nivo/scatterplot'
 
 export interface RectDrawInfo {
   xVal: number,
@@ -30,8 +29,7 @@ export const MoonChart = ({data, labels, predictionData, trainingStarted}: MoonC
         'markers',
         'mesh',
         'legends',
-        (props: any) => {
-          const arr = [-2, -1.9, -1.8, -1.7, -1.6, -1.5, -1.4, -1.3, -1.2, -1.1, -1.0];
+        (props) => {
           if (trainingStarted && predictionData) {
             return (
               <>
