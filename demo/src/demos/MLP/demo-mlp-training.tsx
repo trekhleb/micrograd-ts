@@ -18,24 +18,10 @@ import { H2 } from '../../components/h2'
 import { LossChart } from '../../components/loss-chart'
 import { toFloat, toInt } from '../../utils/numbers'
 import { convertDataToValue, generateCircleData } from './dataUtils'
-import { MoonChart } from '../../components/MoonData'
+import { MoonChart, RectDrawInfo } from '../../components/MoonData'
 import { Select } from 'baseui/select'
 import { CaptionBlock } from '../../components/CaptionBlock'
 import { LegendLayout } from '../../components/LegendLayout'
-
-// Create a training dataset with 4 entries.
-// Each dataset entry consists of 3 inputs (features).
-/*const xs = [
-  [v(2), v(3), v(-1)],
-  [v(3), v(-1), v(0.5)],
-  [v(0.5), v(1), v(1)],
-  [v(1), v(1), v(-1)],
-] */
-
-// Create training labels.
-// One label for each dataset entry.
-// Here we're saying that with the xs[i] input we expect the network to have y[i] in the output.
-const ys = [v(1), v(-1), v(-1), v(1)]
 
 interface Data {
   data: number[][]
@@ -48,6 +34,8 @@ export function DemoMLPTraining() {
     0.2
   )
 
+  const [startTraining, setStartTraining] = React.useState<boolean>(false);
+
   const dimensionOptions = [
     {label: '[4, 4, 1]', id: 1},
     {label: '[16, 1]', id: 2},
@@ -58,7 +46,8 @@ export function DemoMLPTraining() {
   const [dataPointsRaw, setDataPoints] = React.useState<number | string>(150)
 
   const [losses, setLosses] = React.useState<number[]>([])
-  const [predictions, setPredictions] = React.useState<number[]>([])
+  const [trainingPredictions, setTrainingPredictions] = React.useState<number[]>([]);
+  const [testPredictions, setTestPredictions] = React.useState<RectDrawInfo[]>([]);
 
   const epochs = toInt(epochsRaw, 0)
   const learningRate = toFloat(learningRateRaw, 0)
@@ -93,6 +82,7 @@ export function DemoMLPTraining() {
     // - 1st layer of 4 neurons
     // - 2nd layer of 4 neurons
     // - 1 output
+    setStartTraining(true);
     const mlp = new MLP(2, neuronDimensions)
 
     const lossHistory: number[] = []
@@ -124,10 +114,22 @@ export function DemoMLPTraining() {
         p.data += -learningRate * p.grad
       }
 
-      setPredictions(ypred.map((out) => out.data))
+      setTrainingPredictions(ypred.map((out) => out.data))
     }
     setLosses([...lossHistory])
-  }, [epochs, learningRate, circleData])
+    const newTestPredictions = [];
+    for (let i = -5; i <= 5; i += 0.25) {
+      for (let j = -5; j <= 5; j += 0.25) {
+        const testValue = [v(i), v(j)];
+        newTestPredictions.push({
+          xVal: i,
+          yVal: j,
+          pred: mlp.forward(testValue)[0].data,
+        })
+      }
+    }
+    setTestPredictions(newTestPredictions);
+  }, [epochs, learningRate, circleData, neuronDimensions])
 
   React.useEffect(() => {
     if (losses.length === 0) {
@@ -228,7 +230,10 @@ export function DemoMLPTraining() {
                 min={0}
                 max={1000}
                 value={dataPointsRaw}
-                onChange={(e) => setDataPoints(e.target.value)}
+                onChange={(e) => {
+                  setStartTraining(false);
+                  setDataPoints(e.target.value)
+                }}
               />
             </FormControl>
           </Block>
@@ -307,7 +312,7 @@ export function DemoMLPTraining() {
                 circleData.data[circleData.data.length - (10 + trainingEntryIndex) - 1][0].toFixed(2),
                 circleData.data[circleData.data.length - (10 + trainingEntryIndex) - 1][1].toFixed(2),
                 y.data,
-                predictions[predictions.length - (10 + trainingEntryIndex) - 1]?.toFixed(4),
+                trainingPredictions[trainingPredictions.length - (10 + trainingEntryIndex) - 1]?.toFixed(4),
               ])}
             />
           </Block>
@@ -320,9 +325,14 @@ export function DemoMLPTraining() {
           <Block height="440px" $style={{ fontFamily: 'monospace' }} width='100%'>
             <LossChart data={lossChartData} />
           </Block>
-          <H2>Data Visualization</H2>
+          <H2>{`Data Visualization ${startTraining ? '(Predicted)' : '(Actual)'}`}</H2>
           <Block height="440px" $style={{ fontFamily: 'monospace' }}>
-            <MoonChart data={data} labels={circleData.labels}></MoonChart>
+            <MoonChart 
+              data={data} 
+              labels={circleData.labels}
+              trainingStarted={startTraining}
+              predictionData={testPredictions}
+            />
           </Block>
         </Block>
       </Block>

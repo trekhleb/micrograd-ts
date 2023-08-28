@@ -1,12 +1,20 @@
 import { ScatterPlot, ScatterPlotRawSerie, ScatterPlotDatum, ResponsiveScatterPlot} from '@nivo/scatterplot'
+import { Value } from '../../../micrograd/engine'
 
-type MoonChartProps = {
-  data: ScatterPlotRawSerie<ScatterPlotDatum>[]
-  labels: number[],
+export interface RectDrawInfo {
+  xVal: number,
+  yVal: number,
+  pred: number,
 }
 
-export const MoonChart = (props: MoonChartProps) => {
-  const { data, labels } = props
+interface MoonChartProps {
+  data: ScatterPlotRawSerie<ScatterPlotDatum>[],
+  predictionData: RectDrawInfo[],
+  labels: number[],
+  trainingStarted: boolean
+}
+
+export const MoonChart = ({data, labels, predictionData, trainingStarted}: MoonChartProps) => {
 
   return (
     <ResponsiveScatterPlot
@@ -24,13 +32,32 @@ export const MoonChart = (props: MoonChartProps) => {
         'legends',
         (props: any) => {
           const arr = [-2, -1.9, -1.8, -1.7, -1.6, -1.5, -1.4, -1.3, -1.2, -1.1, -1.0];
-          return (
-            <>
+          if (trainingStarted) {
+            return (
+              <>
+                {predictionData.map((data, idx) => {
+                  return (
+                    <rect 
+                      key={`pred_highlight_${idx}`}
+                      x={props.xScale(data.xVal)}
+                      y={props.yScale(data.yVal)}
+                      width={10}
+                      height={5}
+                      fill={Math.floor(data.pred) === -1 ? `rgba(255, 0, 0, ${0.5 * Math.abs(data.pred)})` : `rgba(0, 255, 0, ${0.5 * Math.abs(data.pred)})`}
+                    >
+                    </rect>
+                  )
+                })}
+              </>
+            )
+          } else {
+            return (
+              <>
               {data[0].data.map((val, idx) => {
                 return (
                   <rect
                     key={`plot_highlight_${idx}`}
-                    x={props.xScale((val.x as number) - 0.13)}
+                    x={props.xScale((val.x as number) - 0.2)}
                     y={props.yScale((val.y as number) + 0.3)}
                     width={10}
                     height={10}
@@ -40,8 +67,9 @@ export const MoonChart = (props: MoonChartProps) => {
                   </rect>
                 )
               })}
-            </>
-          );
+              </>
+            )
+          }
         }
       ]}
       yFormat=" >-.2f"
