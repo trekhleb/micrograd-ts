@@ -21,11 +21,16 @@ import { convertDataToValue, generateCircleData } from './dataUtils'
 import { MoonChart, RectDrawInfo } from '../../components/MoonData'
 import { CaptionBlock } from '../../components/CaptionBlock'
 import { LegendLayout } from '../../components/LegendLayout'
+import { circleWorkerCode } from './circleWorker'
 
 interface Data {
   data: number[][]
   labels: number[]
 }
+
+// Create a blob from the worker code string
+const circleWorkerBlob = new Blob([circleWorkerCode], { type: 'application/javascript' });
+
 
 export function DemoMLPTraining() {
   const [epochsRaw, setEpochs] = React.useState<number | string>(30)
@@ -62,7 +67,9 @@ export function DemoMLPTraining() {
   }, [circleData])
 
   React.useEffect(() => {
-    const circleWorker = new Worker('/circleWorker.js')
+    const circleWorkerUrl = URL.createObjectURL(circleWorkerBlob);
+    const circleWorker = new Worker(circleWorkerUrl);
+    //const circleWorker = new Worker('/circleWorker.js')
     setDataLoaded(false);
     circleWorker.onmessage = (event: MessageEvent<Data>) => {
       setCircleData(event.data)
@@ -72,6 +79,7 @@ export function DemoMLPTraining() {
 
     return () => {
       circleWorker.terminate()
+      URL.revokeObjectURL(circleWorkerUrl);
     }
   }, [dataPoints])
 
@@ -206,6 +214,7 @@ export function DemoMLPTraining() {
               <Input
                 type="number"
                 min={0}
+                maxLength={4}
                 value={epochsRaw}
                 onChange={(e) => setEpochs(e.target.value)}
               />
@@ -221,6 +230,7 @@ export function DemoMLPTraining() {
                 type="number" 
                 min={0}
                 max={1000}
+                maxLength={4}
                 value={dataPointsRaw}
                 onChange={(e) => {
                   setStartTraining(false);
@@ -293,7 +303,7 @@ export function DemoMLPTraining() {
                   y.data,
                   trainingPredictions[trainingEntryIndex].toFixed(4),
                 ]
-              }) : [['Load...', 'Load...', 'Load...', 'Load...']]}
+              }) : [['1.00', '1.00', '1', '1.0000']]}
             />
           </Block>
         </Block>

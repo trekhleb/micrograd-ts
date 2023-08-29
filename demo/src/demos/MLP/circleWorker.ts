@@ -1,3 +1,4 @@
+export const circleWorkerCode = `
 self.onmessage = (event) => {
   //Define function
   const generateCircleData = (n) => {
@@ -33,5 +34,6 @@ self.onmessage = (event) => {
   } */
   self.postMessage(result);
 }
+`;
 
 
