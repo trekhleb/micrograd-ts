@@ -13,6 +13,8 @@ interface MoonChartProps {
   trainingStarted: boolean
 }
 
+const nodeSize = 10;
+
 export const MoonChart = ({data, labels, predictionData, trainingStarted}: MoonChartProps) => {
 
   return (
@@ -21,6 +23,7 @@ export const MoonChart = ({data, labels, predictionData, trainingStarted}: MoonC
       margin={{ top: 8, right: 8, bottom: 70, left: 60 }}
       xScale={{type: 'linear', min: -10, max: 10}}
       yScale={{type: 'linear', min: -10, max: 10}}
+      nodeSize={nodeSize}
 
       layers={[
         'grid',
@@ -55,8 +58,8 @@ export const MoonChart = ({data, labels, predictionData, trainingStarted}: MoonC
                 return (
                   <rect
                     key={`plot_highlight_${idx}`}
-                    x={props.xScale((val.x as number) - 0.2)}
-                    y={props.yScale((val.y as number) + 0.3)}
+                    x={props.xScale(val.x as number) - (nodeSize / 2)}
+                    y={props.yScale(val.y as number) - (nodeSize / 2)}
                     width={10}
                     height={10}
                     fill={labels[idx] === -1 ? `rgba(255, 0, 0, 0.5)` : `rgba(0, 255, 0, 0.5)`}
