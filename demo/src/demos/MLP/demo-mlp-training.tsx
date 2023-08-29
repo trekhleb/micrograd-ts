@@ -303,7 +303,7 @@ export function DemoMLPTraining() {
                   y.data,
                   trainingPredictions[trainingEntryIndex].toFixed(4),
                 ]
-              }) : [['1.00', '1.00', '1', '1.0000']]}
+              }) : [['-1.00', '-1.00', '1', '-1.0000']]}
             />
           </Block>
         </Block>
