@@ -34,7 +34,7 @@ export function DemoMLPTraining() {
   )
 
   const [startTraining, setStartTraining] = React.useState<boolean>(false);
-  const [dataLoaded, setDataLoaded] = React.useState<boolean>(true);
+  const [dataLoaded, setDataLoaded] = React.useState<boolean>(false);
 
   const [dataPointsRaw, setDataPoints] = React.useState<number | string>(150)
 
@@ -62,7 +62,7 @@ export function DemoMLPTraining() {
   }, [circleData])
 
   React.useEffect(() => {
-    const circleWorker = new Worker('circleWorker.js')
+    const circleWorker = new Worker('/circleWorker.js')
     setDataLoaded(false);
     circleWorker.onmessage = (event: MessageEvent<Data>) => {
       setCircleData(event.data)
@@ -131,11 +131,12 @@ export function DemoMLPTraining() {
   }, [epochs, learningRate, circleDataValues, circleData])
 
   React.useEffect(() => {
-    if (losses.length === 0) {
+    //If there are no losses and dynamic data has been initialized
+    if (losses.length === 0 && circleData.data.length !== 0) {
       // Initial training
       trainCallback()
     }
-  }, [trainCallback, losses])
+  }, [trainCallback, losses, circleData])
 
   const lossChartData: Serie[] = [
     {
@@ -285,10 +286,10 @@ export function DemoMLPTraining() {
             <H2>Final Predictions</H2>
             <Table
               columns={['x','y','Label', 'Predict']}
-              data={dataLoaded && circleDataValues && circleDataValues.labelValues && circleDataValues.labelValues.length >= 10 ? circleDataValues.labelValues.slice(0, 10).map((y, trainingEntryIndex) => {
+              data={dataLoaded && circleDataValues && circleDataValues.dataValues.length !== 0 && trainingPredictions.length !== 0 && circleDataValues.labelValues.length >= 10 ? circleDataValues.labelValues.slice(0, 10).map((y, trainingEntryIndex) => {
                 return [
-                  circleData.data[trainingEntryIndex][0].toFixed(2),
-                  circleData.data[trainingEntryIndex][1].toFixed(2),
+                  circleDataValues.dataValues[trainingEntryIndex][0].data.toFixed(2),
+                  circleDataValues.dataValues[trainingEntryIndex][1].data.toFixed(2),
                   y.data,
                   trainingPredictions[trainingEntryIndex].toFixed(4),
                 ]
