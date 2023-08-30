@@ -313,6 +313,7 @@ export function DemoMLPTraining() {
             <Block height="440px" $style={{ fontFamily: 'monospace' }}>
               <MoonChart 
                 data={data} 
+                nodeSize={10}
                 labels={circleData.labels}
                 trainingStarted={startTraining}
                 predictionData={testPredictions ? testPredictions : []}
