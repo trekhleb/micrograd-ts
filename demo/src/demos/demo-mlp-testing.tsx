@@ -67,7 +67,6 @@ export function DemoMLPTesting() {
 
   // Inference.
   const testCallback = React.useCallback((mlp: MLP) => {
-    console.log('+++ Inference')
     const newTestPredictions = []
     for (let xVal = minX; xVal <= maxX; xVal += testPointsStep) {
       for (let yVal = minY; yVal <= maxY; yVal += testPointsStep) {
@@ -81,7 +80,6 @@ export function DemoMLPTesting() {
 
   // Training.
   const trainCallback = React.useCallback(() => {
-    console.log('+++ Training')
     // Create a Multi Layer Perceptron (MLP) network.
     // - 3 inputs
     // - 1st layer of 4 neurons
@@ -126,14 +124,12 @@ export function DemoMLPTesting() {
 
   // Update training set once the data points num is updated.
   React.useEffect(() => {
-    console.log('+++ Generate training set')
     setTrainSet(generateCircleData(pointsNum))
   }, [pointsNum])
 
   // Once the training set is updated, launch the training process.
   React.useEffect(() => {
     if (!trainSet.data.length) return
-    console.log('+++ Launch the training')
     trainCallback()
   }, [trainCallback, trainSet])
 
