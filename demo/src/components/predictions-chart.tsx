@@ -14,15 +14,16 @@ interface TestPredChartProps {
   data: ScatterPlotRawSerie<ScatterPlotDatum>[]
   nodeSize: number
   predictionData?: RectDrawInfo[]
-  labels: number[],
-  minX: number,
-  maxX: number,
-  minY: number,
-  maxY: number,
+  labels: number[]
+  minX: number
+  maxX: number
+  minY: number
+  maxY: number
 }
 
 export const PredictionsChart = (props: TestPredChartProps) => {
-  const { data, labels, predictionData, nodeSize, minX, maxX, minY, maxY } = props
+  const { data, labels, predictionData, nodeSize, minX, maxX, minY, maxY } =
+    props
 
   return (
     <ResponsiveScatterPlot
@@ -39,23 +40,23 @@ export const PredictionsChart = (props: TestPredChartProps) => {
         'mesh',
         'legends',
         (props) => {
-          if (predictionData) {
+          if (predictionData && predictionData.length) {
             return (
               <>
                 {predictionData.map((data, idx) => {
                   return (
-                    <rect
+                    <circle
                       key={`pred_highlight_${idx}`}
-                      x={props.xScale(data.xVal)}
-                      y={props.yScale(data.yVal)}
-                      width={10}
-                      height={10}
+                      cx={props.xScale(data.xVal)}
+                      cy={props.yScale(data.yVal)}
+                      r={nodeSize / 2}
                       fill={
                         Math.floor(data.pred) === -1
-                          ? `rgba(255, 0, 0, ${0.25 * Math.abs(data.pred)})`
-                          : `rgba(0, 255, 0, ${0.25 * Math.abs(data.pred)})`
+                          ? `rgba(255, 0, 0, ${0.6 * Math.abs(data.pred)})`
+                          : `rgba(0, 200, 0, ${0.8 * Math.abs(data.pred)})`
                       }
-                    ></rect>
+                      pointerEvents={'none'}
+                    ></circle>
                   )
                 })}
               </>
@@ -65,19 +66,18 @@ export const PredictionsChart = (props: TestPredChartProps) => {
               <>
                 {data[0].data.map((val, idx) => {
                   return (
-                    <rect
+                    <circle
                       key={`plot_highlight_${idx}`}
-                      x={props.xScale(val.x as number) - nodeSize / 2}
-                      y={props.yScale(val.y as number) - nodeSize / 2}
-                      width={10}
-                      height={10}
+                      cx={props.xScale(val.x as number)}
+                      cy={props.yScale(val.y as number)}
+                      r={nodeSize / 2 + 1}
                       fill={
                         labels[idx] === -1
-                          ? `rgba(255, 0, 0, 0.5)`
-                          : `rgba(0, 255, 0, 0.5)`
+                          ? `rgba(255, 0, 0, 0.9)`
+                          : `rgba(0, 200, 0, 0.9)`
                       }
                       pointerEvents={'none'}
-                    ></rect>
+                    ></circle>
                   )
                 })}
               </>

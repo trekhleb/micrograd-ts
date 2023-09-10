@@ -30,13 +30,13 @@ interface Data {
   labels: number[]
 }
 
-const minX = -8
-const maxX = 8
-const minY = -8
-const maxY = 8
-const testPointsStep = 0.25
+const minX = -7
+const maxX = 7
+const minY = -7
+const maxY = 7
+const testPointsStep = 0.5
 const defaultPointsNum = 150
-const defaultEpochs = 40
+const defaultEpochs = 50
 const defaultLearningRate = 0.2
 const chartHeight = 440
 
@@ -326,10 +326,10 @@ export function DemoMLPTesting() {
           nodeSize={10}
           labels={trainSet.labels}
           predictionData={testPredicts ? testPredicts : []}
-          minX={-8}
-          maxX={8}
-          minY={-8}
-          maxY={8}
+          minX={-7}
+          maxX={7}
+          minY={-7}
+          maxY={7}
         />
       </Block>
     </>
