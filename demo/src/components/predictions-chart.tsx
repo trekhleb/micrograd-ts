@@ -49,11 +49,11 @@ export const PredictionsChart = (props: TestPredChartProps) => {
                       x={props.xScale(data.xVal)}
                       y={props.yScale(data.yVal)}
                       width={10}
-                      height={5}
+                      height={10}
                       fill={
                         Math.floor(data.pred) === -1
-                          ? `rgba(255, 0, 0, ${0.5 * Math.abs(data.pred)})`
-                          : `rgba(0, 255, 0, ${0.5 * Math.abs(data.pred)})`
+                          ? `rgba(255, 0, 0, ${0.25 * Math.abs(data.pred)})`
+                          : `rgba(0, 255, 0, ${0.25 * Math.abs(data.pred)})`
                       }
                     ></rect>
                   )

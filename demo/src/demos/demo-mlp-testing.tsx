@@ -10,11 +10,7 @@ import {
   ScatterPlotDatum,
 } from '@nivo/scatterplot/dist/types/types'
 import { StyledLink } from 'baseui/link'
-import {
-  ParagraphMedium,
-  MonoLabelLarge,
-  MonoLabelSmall,
-} from 'baseui/typography'
+import { ParagraphMedium, MonoLabelLarge } from 'baseui/typography'
 import { Table } from 'baseui/table-semantic'
 
 import { v, Value } from '../../../micrograd/engine'
@@ -26,6 +22,8 @@ import { LossChart } from '../components/loss-chart'
 import { toFloat, toInt } from '../utils/numbers'
 import { convertDataToValue, generateCircleData } from '../utils/data'
 import { PredictionsChart, RectDrawInfo } from '../components/predictions-chart'
+import { Legend } from '../components/legend'
+import { styled } from 'baseui'
 
 interface Data {
   data: number[][]
@@ -38,8 +36,9 @@ const minY = -8
 const maxY = 8
 const testPointsStep = 0.25
 const defaultPointsNum = 150
-const defaultEpochs = 30
+const defaultEpochs = 40
 const defaultLearningRate = 0.2
+const chartHeight = 440
 
 export function DemoMLPTesting() {
   // Learning rate
@@ -157,25 +156,31 @@ export function DemoMLPTesting() {
     },
   ]
 
-  return (
+  const description = (
     <>
       <ParagraphMedium>
         This demo illustrates the training process of the{' '}
         <StyledLink href="https://en.wikipedia.org/wiki/Multilayer_perceptron">
           Multilayer perceptron
         </StyledLink>{' '}
-        against a set of dynamically generated "circular" data, where the inner
-        circle has positive labels (1), and the outer circle has negative labels
-        (-1)
+        against a set of dynamically generated "circular" data, where the{' '}
+        <Green>inner circle</Green> has positive labels <Green>(1)</Green>, and
+        the <Red>outer circle</Red> has negative labels <Red>(-1)</Red>
       </ParagraphMedium>
 
       <ParagraphMedium>
         Once the network has been trained, we test it against a uniform range of
-        data. The accuracy of our test predictions provides an additional
-        measure of clarity regarding how well our model is predicting the
-        expected output.
+        data to build a prediction heatmap: <Red>red</Red> area is where the
+        model predicts <Red>negative</Red> values and <Green>green</Green> area
+        is where the model predicts <Green>positive</Green> value. The accuracy
+        of our test predictions provides an additional measure of clarity
+        regarding how well our model is predicting the expected output.
       </ParagraphMedium>
+    </>
+  )
 
+  const codeContext = (
+    <>
       <H2>Code Context</H2>
       <CodeLinks
         links={[
@@ -189,7 +194,11 @@ export function DemoMLPTesting() {
           },
         ]}
       />
+    </>
+  )
 
+  const trainingParams = (
+    <>
       <H2>Training Parameters</H2>
       <Block>
         <Block display="flex" flexDirection={['column', 'column', 'row']}>
@@ -259,110 +268,89 @@ export function DemoMLPTesting() {
           Retrain
         </Button>
       </Block>
+    </>
+  )
 
-      <Block
-        marginBottom="-20px"
-        display="flex"
-        flexDirection={['column', 'column', 'row']}
-      >
-        <Block marginRight={['0', '0', '30px']}>
-          <Block marginBottom="40px">
-            <H2>Final Loss (MSE)</H2>
-            <MonoLabelLarge>
-              {(losses[losses.length - 1] || 0).toFixed(4)}
-            </MonoLabelLarge>
-          </Block>
+  const lossBlock = (
+    <>
+      <H2>Final Loss (MSE)</H2>
+      <MonoLabelLarge>
+        {(losses[losses.length - 1] || 0).toFixed(4)}
+      </MonoLabelLarge>
+    </>
+  )
 
-          <Block>
-            <H2>Training Predictions</H2>
-            <Table
-              columns={['x', 'y', 'Label', 'Predict']}
-              data={
-                trainSetValues?.labelValues?.length
-                  ? trainSetValues.labelValues.slice(0, 10).map((y, idx) => {
-                      return [
-                        trainSetValues.dataValues[idx][0]?.data?.toFixed(2),
-                        trainSetValues.dataValues[idx][1]?.data?.toFixed(2),
-                        y?.data,
-                        trainPredicts[idx]?.toFixed(4),
-                      ]
-                    })
-                  : []
-              }
-            />
-          </Block>
-        </Block>
+  const trainingPredictions = (
+    <>
+      <H2>Training Predictions</H2>
+      <Table
+        columns={['x', 'y', 'Label', 'Predict']}
+        data={
+          trainSetValues?.labelValues?.length
+            ? trainSetValues.labelValues.slice(0, 7).map((y, idx) => {
+                return [
+                  trainSetValues.dataValues[idx][0]?.data?.toFixed(2),
+                  trainSetValues.dataValues[idx][1]?.data?.toFixed(2),
+                  y?.data,
+                  trainPredicts[idx]?.toFixed(4),
+                ]
+              })
+            : []
+        }
+      />
+    </>
+  )
 
-        <Block
-          marginLeft={['0', '0', '30px']}
-          flex="1"
-          display={'flex'}
-          flexDirection={'column'}
-          overflow="hidden"
-        >
-          <Block marginRight={['0', '0', '40px']} flex={1}>
-            <H2>Legend</H2>
-            <MonoLabelSmall>
-              <Block display="flex" flexDirection="row" alignItems="center">
-                <Block display="flex" marginRight="30px" alignItems="center">
-                  <div
-                    style={{
-                      backgroundColor: 'rgba(0, 255, 0, 0.2)',
-                      width: '20px',
-                      height: '20px',
-                      marginRight: '10px',
-                    }}
-                  />
-                  <div>Positive (1)</div>
-                </Block>
-                <Block display="flex" alignItems="center">
-                  <div
-                    style={{
-                      backgroundColor: 'rgba(255, 0, 0, 0.2)',
-                      width: '20px',
-                      height: '20px',
-                      marginRight: '10px',
-                    }}
-                  />
-                  <div>Negative (-1)</div>
-                </Block>
-              </Block>
-            </MonoLabelSmall>
-          </Block>
-
-          <H2>MLP Predictions</H2>
-          <Block
-            display="flex"
-            width="100%"
-            flexDirection="row"
-            height="440px"
-            $style={{ fontFamily: 'monospace' }}
-          >
-            <PredictionsChart
-              data={trainScatterData}
-              nodeSize={10}
-              labels={trainSet.labels}
-              predictionData={testPredicts ? testPredicts : []}
-              minX={-8}
-              maxX={8}
-              minY={-8}
-              maxY={8}
-            />
-          </Block>
-
-          <H2>Training Loss History</H2>
-          <Block
-            height="440px"
-            $style={{ fontFamily: 'monospace' }}
-            width="100%"
-          >
-            <LossChart data={lossChartData} />
-          </Block>
-        </Block>
+  const legendBlock = (
+    <>
+      <H2>Legend</H2>
+      <Block display="flex" flexDirection="row" alignItems="center">
+        <Legend color="rgba(0, 255, 0, 0.2)" label="Positive (1)" />
+        <Legend color="rgba(255, 0, 0, 0.2)" label="Negative (-1)" />
       </Block>
+    </>
+  )
 
-      <Code
-        code={`
+  const scatterplotChart = (
+    <>
+      <H2>MLP Predictions Map</H2>
+      <Block
+        display="flex"
+        width="100%"
+        flexDirection="row"
+        height={`${chartHeight}px`}
+        $style={{ fontFamily: 'monospace' }}
+      >
+        <PredictionsChart
+          data={trainScatterData}
+          nodeSize={10}
+          labels={trainSet.labels}
+          predictionData={testPredicts ? testPredicts : []}
+          minX={-8}
+          maxX={8}
+          minY={-8}
+          maxY={8}
+        />
+      </Block>
+    </>
+  )
+
+  const lossChart = (
+    <>
+      <H2>Training Loss History</H2>
+      <Block
+        height={`${chartHeight}px`}
+        $style={{ fontFamily: 'monospace' }}
+        width="100%"
+      >
+        <LossChart data={lossChartData} />
+      </Block>
+    </>
+  )
+
+  const codeExample = (
+    <Code
+      code={`
 // Dynamically create a training dataset.
 // Each dataset entry consists of 2 inputs (features).
 const points = generateData(150)
@@ -414,7 +402,56 @@ for (let epoch = 1; epoch <= epochs; epoch++) {
   setPredictions(ypred.map((out) => out.data))
 }
           `}
-      />
+    />
+  )
+
+  return (
+    <>
+      {description}
+      {codeContext}
+      {trainingParams}
+
+      <Block
+        marginBottom="-20px"
+        display="flex"
+        flexDirection={['column', 'column', 'row']}
+      >
+        <Block marginRight={['0', '0', '30px']}>
+          <Block marginBottom="40px">{lossBlock}</Block>
+          <Block>{trainingPredictions}</Block>
+        </Block>
+
+        <Block
+          marginLeft={['0', '0', '30px']}
+          flex="1"
+          display={'flex'}
+          flexDirection={'column'}
+          overflow="hidden"
+        >
+          <Block>{legendBlock}</Block>
+
+          <Block display="flex" flexDirection={['column', 'column', 'row']}>
+            <Block flex="1" marginRight={[0, 0, '10px']}>
+              {scatterplotChart}
+            </Block>
+            <Block flex="1" marginLeft={[0, 0, '10px']}>
+              {lossChart}
+            </Block>
+          </Block>
+        </Block>
+      </Block>
+
+      <Block marginTop="60px">{codeExample}</Block>
     </>
   )
 }
+
+const Green = styled('span', {
+  color: 'green',
+  fontWeight: 500,
+})
+
+const Red = styled('span', {
+  color: 'red',
+  fontWeight: 500,
+})
