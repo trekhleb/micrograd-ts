@@ -34,6 +34,4 @@ self.onmessage = (event) => {
   } */
   self.postMessage(result);
 }
-`;
-
-
+`

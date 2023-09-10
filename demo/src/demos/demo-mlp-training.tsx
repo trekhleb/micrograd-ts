@@ -142,10 +142,8 @@ export function DemoMLPTraining() {
         <Block display="flex" flexDirection={['column', 'column', 'row']}>
           <Block flex="1" marginRight={['0px', '0px', '10px']}>
             <FormControl
-              label={() => 'Epochs'}
-              caption={() =>
-                'For how many iterations we plan to train the network'
-              }
+              label="Epochs"
+              caption="For how many iterations we plan to train the network"
             >
               <Input
                 type="number"
@@ -158,10 +156,8 @@ export function DemoMLPTraining() {
 
           <Block flex="1" marginLeft={['0px', '0px', '10px']}>
             <FormControl
-              label={() => 'Learning Rate'}
-              caption={() =>
-                'Defines how big should be the gradient convergence step'
-              }
+              label="Learning Rate"
+              caption="Defines how big should be the gradient convergence step"
             >
               <Input
                 value={learningRateRaw}

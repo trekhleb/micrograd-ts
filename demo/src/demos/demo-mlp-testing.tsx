@@ -5,7 +5,10 @@ import { Button } from 'baseui/button'
 import { Input } from 'baseui/input'
 import { GiWeightLiftingUp } from 'react-icons/gi'
 import { Datum, Serie } from '@nivo/line'
-import { ScatterPlotRawSerie, ScatterPlotDatum } from '@nivo/scatterplot/dist/types/types'
+import {
+  ScatterPlotRawSerie,
+  ScatterPlotDatum,
+} from '@nivo/scatterplot/dist/types/types'
 import { StyledLink } from 'baseui/link'
 import { ParagraphMedium, MonoLabelLarge } from 'baseui/typography'
 import { Table } from 'baseui/table-semantic'
@@ -19,7 +22,6 @@ import { LossChart } from '../components/loss-chart'
 import { toFloat, toInt } from '../utils/numbers'
 import { convertDataToValue, generateCircleData } from '../utils/data'
 import { TestPredChart, RectDrawInfo } from '../components/test-pred-chart'
-import { CaptionBlock } from '../components/caption-block'
 import { LegendLayout } from '../components/legend-layout'
 import { circleWorkerCode } from '../workers/circleWorker'
 
@@ -29,46 +31,55 @@ interface Data {
 }
 
 // Create a blob from the worker code string
-const circleWorkerBlob = new Blob([circleWorkerCode], { type: 'application/javascript' });
+const circleWorkerBlob = new Blob([circleWorkerCode], {
+  type: 'application/javascript',
+})
 
-export function DemoMLPTrainingDataGen() {
+export function DemoMLPTesting() {
   const [epochsRaw, setEpochs] = React.useState<number | string>(30)
   const [learningRateRaw, setLearningRate] = React.useState<number | string>(
     0.2
   )
 
-  const [startTraining, setStartTraining] = React.useState<boolean>(false);
-  const [dataLoaded, setDataLoaded] = React.useState<boolean>(false);
+  const [startTraining, setStartTraining] = React.useState<boolean>(false)
+  const [dataLoaded, setDataLoaded] = React.useState<boolean>(false)
 
   const [dataPointsRaw, setDataPoints] = React.useState<number | string>(150)
 
   const [losses, setLosses] = React.useState<number[]>([])
-  const [trainingPredictions, setTrainingPredictions] = React.useState<number[]>([]);
-  const [testPredictions, setTestPredictions] = React.useState<RectDrawInfo[]>([]);
+  const [trainingPredictions, setTrainingPredictions] = React.useState<
+    number[]
+  >([])
+  const [testPredictions, setTestPredictions] = React.useState<RectDrawInfo[]>(
+    []
+  )
 
   const epochs = toInt(epochsRaw, 0)
   const learningRate = toFloat(learningRateRaw, 0)
   const dataPoints = toInt(dataPointsRaw, 0)
 
-  const [circleData, setCircleData] = React.useState<Data>({data: [], labels: []})
+  const [circleData, setCircleData] = React.useState<Data>({
+    data: [],
+    labels: [],
+  })
   const [hoverTrue, setHoverTrue] = React.useState<boolean>(false)
   const [hoverFalse, setHoverFalse] = React.useState<boolean>(false)
 
   React.useEffect(() => {
     setCircleData(generateCircleData(150))
   }, [])
-  
+
   //Dynamically generate training dataset
   const circleDataValues = React.useMemo(() => {
     const vals = convertDataToValue(circleData)
-    setDataLoaded(true);
-    return vals;
+    setDataLoaded(true)
+    return vals
   }, [circleData])
 
   React.useEffect(() => {
-    const circleWorkerUrl = URL.createObjectURL(circleWorkerBlob);
-    const circleWorker = new Worker(circleWorkerUrl);
-    setDataLoaded(false);
+    const circleWorkerUrl = URL.createObjectURL(circleWorkerBlob)
+    const circleWorker = new Worker(circleWorkerUrl)
+    setDataLoaded(false)
     circleWorker.onmessage = (event: MessageEvent<Data>) => {
       setCircleData(event.data)
     }
@@ -76,7 +87,7 @@ export function DemoMLPTrainingDataGen() {
 
     return () => {
       circleWorker.terminate()
-      URL.revokeObjectURL(circleWorkerUrl);
+      URL.revokeObjectURL(circleWorkerUrl)
     }
   }, [dataPoints])
 
@@ -86,7 +97,7 @@ export function DemoMLPTrainingDataGen() {
     // - 1st layer of 4 neurons
     // - 2nd layer of 4 neurons
     // - 1 output
-    setStartTraining(true);
+    setStartTraining(true)
     const mlp = new MLP(2, [4, 4, 1])
 
     const lossHistory: number[] = []
@@ -121,10 +132,10 @@ export function DemoMLPTrainingDataGen() {
       setTrainingPredictions(ypred.map((out) => out.data))
     }
     setLosses([...lossHistory])
-    const newTestPredictions = [];
+    const newTestPredictions = []
     for (let i = -5; i <= 5; i += 0.25) {
       for (let j = -5; j <= 5; j += 0.25) {
-        const testValue = [v(i), v(j)];
+        const testValue = [v(i), v(j)]
         newTestPredictions.push({
           xVal: i,
           yVal: j,
@@ -132,7 +143,7 @@ export function DemoMLPTrainingDataGen() {
         })
       }
     }
-    setTestPredictions(newTestPredictions);
+    setTestPredictions(newTestPredictions)
   }, [epochs, learningRate, circleDataValues, circleData])
 
   React.useEffect(() => {
@@ -161,9 +172,9 @@ export function DemoMLPTrainingDataGen() {
       data: circleData.data.map((datum) => {
         return {
           x: datum[0],
-          y: datum[1]
+          y: datum[1],
         }
-      })
+      }),
     },
   ]
 
@@ -174,14 +185,14 @@ export function DemoMLPTrainingDataGen() {
         <StyledLink href="https://en.wikipedia.org/wiki/Multilayer_perceptron">
           Multilayer perceptron
         </StyledLink>{' '}
-        against a set of dynamically generated data. 
+        against a set of dynamically generated data.
       </ParagraphMedium>
 
       <ParagraphMedium>
-        Once the network has been trained, we test it against a uniform range of data
-        between the points (-5, -5) and (5, 5). The accuracy of our test predictions
-        provides an additional measure of clarity regarding how well our model is
-        predicting the expected output.
+        Once the network has been trained, we test it against a uniform range of
+        data between the points (-5, -5) and (5, 5). The accuracy of our test
+        predictions provides an additional measure of clarity regarding how well
+        our model is predicting the expected output.
       </ParagraphMedium>
 
       <H2>Code Context</H2>
@@ -192,8 +203,8 @@ export function DemoMLPTrainingDataGen() {
             name: 'micrograd-ts/micrograd/nn.ts',
           },
           {
-            url: 'https://github.com/trekhleb/micrograd-ts/blob/main/demo/src/demos/demo-mlp-training.tsx',
-            name: 'micrograd-ts/demo/src/demos/demo-mlp-training.tsx',
+            url: 'https://github.com/trekhleb/micrograd-ts/blob/main/demo/src/demos/demo-mlp-testing.tsx',
+            name: 'micrograd-ts/demo/src/demos/demo-mlp-testing.tsx',
           },
         ]}
       />
@@ -201,10 +212,15 @@ export function DemoMLPTrainingDataGen() {
       <H2>Training Parameters</H2>
       <Block>
         <Block display="flex" flexDirection={['column', 'column', 'row']}>
-          <Block display="flex" flexDirection={'column'} flex="1" marginRight={['0px', '0px', '10px']}>
+          <Block
+            display="flex"
+            flexDirection={'column'}
+            flex="1"
+            marginRight={['0px', '0px', '10px']}
+          >
             <FormControl
               label={() => 'Epochs'}
-              caption={<CaptionBlock text={'Network training iterations'}/>}
+              caption="Network training iterations"
             >
               <Input
                 type="number"
@@ -215,30 +231,39 @@ export function DemoMLPTrainingDataGen() {
               />
             </FormControl>
           </Block>
-          <Block display="flex" flexDirection={'column'} flex="1" marginRight={['0px', '0px', '10px']}>
+          <Block
+            display="flex"
+            flexDirection={'column'}
+            flex="1"
+            marginRight={['0px', '0px', '10px']}
+          >
             <FormControl
               label={() => 'Data Points'}
-              caption={<CaptionBlock text={'Scatterplot points generated'}/>
-              }
+              caption="Scatterplot points generated"
             >
               <Input
-                type="number" 
+                type="number"
                 min={0}
                 max={1000}
                 maxLength={4}
                 value={dataPointsRaw}
                 onChange={(e) => {
-                  setStartTraining(false);
+                  setStartTraining(false)
                   setDataPoints(e.target.value)
                 }}
               />
             </FormControl>
           </Block>
 
-          <Block flex="1" flexDirection={'column'} width="100%" marginLeft={['0px', '0px', '10px']}>
+          <Block
+            flex="1"
+            flexDirection={'column'}
+            width="100%"
+            marginLeft={['0px', '0px', '10px']}
+          >
             <FormControl
               label={() => 'Learning Rate'}
-              caption={<CaptionBlock text='Gradient convergence step size'/>}
+              caption="Gradient convergence step size"
             >
               <Input
                 value={learningRateRaw}
@@ -268,54 +293,81 @@ export function DemoMLPTrainingDataGen() {
             </MonoLabelLarge>
           </Block>
           <Block marginRight={['0', '0', '30px']} flex={1}>
-            <LegendLayout legend={[
-              {
-                text: 'True (1)',
-                standardColor: 'rgba(0, 255, 0, 0.2)',
-                hovered: hoverTrue,
-                hoverColor: 'rgba(0, 255, 0, 0.5)',
-                onMouseEnter: () => setHoverTrue(true),
-                onMouseLeave: () => setHoverTrue(false),
-              },
-              {
-                text: 'False (-1)',
-                standardColor: 'rgba(255, 0, 0, 0.2)',
-                hovered: hoverFalse,
-                hoverColor: 'rgba(255, 0, 0, 0.5)',
-                onMouseEnter: () => setHoverFalse(true),
-                onMouseLeave: () => setHoverFalse(false),
-              },
-            ]}/>
+            <LegendLayout
+              legend={[
+                {
+                  text: 'True (1)',
+                  standardColor: 'rgba(0, 255, 0, 0.2)',
+                  hovered: hoverTrue,
+                  hoverColor: 'rgba(0, 255, 0, 0.5)',
+                  onMouseEnter: () => setHoverTrue(true),
+                  onMouseLeave: () => setHoverTrue(false),
+                },
+                {
+                  text: 'False (-1)',
+                  standardColor: 'rgba(255, 0, 0, 0.2)',
+                  hovered: hoverFalse,
+                  hoverColor: 'rgba(255, 0, 0, 0.5)',
+                  onMouseEnter: () => setHoverFalse(true),
+                  onMouseLeave: () => setHoverFalse(false),
+                },
+              ]}
+            />
           </Block>
           <Block>
             <H2>Final Predictions</H2>
             <Table
-              columns={['x','y','Label', 'Predict']}
-              data={dataLoaded && circleDataValues && circleDataValues.dataValues.length !== 0 && trainingPredictions.length !== 0 && circleDataValues.labelValues.length >= 10 ? circleDataValues.labelValues.slice(0, 10).map((y, trainingEntryIndex) => {
-                return [
-                  circleDataValues.dataValues[trainingEntryIndex][0].data.toFixed(2),
-                  circleDataValues.dataValues[trainingEntryIndex][1].data.toFixed(2),
-                  y.data,
-                  trainingPredictions[trainingEntryIndex].toFixed(4),
-                ]
-              }) : [['-1.00', '-1.00', '1', '-1.0000']]}
+              columns={['x', 'y', 'Label', 'Predict']}
+              data={
+                dataLoaded &&
+                circleDataValues &&
+                circleDataValues.dataValues.length !== 0 &&
+                trainingPredictions.length !== 0 &&
+                circleDataValues.labelValues.length >= 10
+                  ? circleDataValues.labelValues
+                      .slice(0, 10)
+                      .map((y, trainingEntryIndex) => {
+                        return [
+                          circleDataValues.dataValues[
+                            trainingEntryIndex
+                          ][0].data.toFixed(2),
+                          circleDataValues.dataValues[
+                            trainingEntryIndex
+                          ][1].data.toFixed(2),
+                          y.data,
+                          trainingPredictions[trainingEntryIndex].toFixed(4),
+                        ]
+                      })
+                  : [['-1.00', '-1.00', '1', '-1.0000']]
+              }
             />
           </Block>
         </Block>
 
-        <Block marginLeft={['0', '0', '30px']} flex="1" display={'flex'} flexDirection={'column'}>
-          <H2>{`Test Predictions Visualization ${startTraining ? '(Predicted)' : '(Actual)'}`}</H2>
-            <Block height="440px" $style={{ fontFamily: 'monospace' }}>
-              <TestPredChart 
-                data={data} 
-                nodeSize={10}
-                labels={circleData.labels}
-                trainingStarted={startTraining}
-                predictionData={testPredictions ? testPredictions : []}
-              />
-            </Block>
+        <Block
+          marginLeft={['0', '0', '30px']}
+          flex="1"
+          display={'flex'}
+          flexDirection={'column'}
+        >
+          <H2>{`Test Predictions Visualization ${
+            startTraining ? '(Predicted)' : '(Actual)'
+          }`}</H2>
+          <Block height="440px" $style={{ fontFamily: 'monospace' }}>
+            <TestPredChart
+              data={data}
+              nodeSize={10}
+              labels={circleData.labels}
+              trainingStarted={startTraining}
+              predictionData={testPredictions ? testPredictions : []}
+            />
+          </Block>
           <H2>Training Loss History</H2>
-          <Block height="440px" $style={{ fontFamily: 'monospace' }} width='100%'>
+          <Block
+            height="440px"
+            $style={{ fontFamily: 'monospace' }}
+            width="100%"
+          >
             <LossChart data={lossChartData} />
           </Block>
         </Block>
