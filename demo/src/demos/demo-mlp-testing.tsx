@@ -10,7 +10,11 @@ import {
   ScatterPlotDatum,
 } from '@nivo/scatterplot/dist/types/types'
 import { StyledLink } from 'baseui/link'
-import { ParagraphMedium, MonoLabelLarge } from 'baseui/typography'
+import {
+  ParagraphMedium,
+  MonoLabelLarge,
+  MonoLabelSmall,
+} from 'baseui/typography'
 import { Table } from 'baseui/table-semantic'
 
 import { v, Value } from '../../../micrograd/engine'
@@ -21,102 +25,86 @@ import { H2 } from '../components/h2'
 import { LossChart } from '../components/loss-chart'
 import { toFloat, toInt } from '../utils/numbers'
 import { convertDataToValue, generateCircleData } from '../utils/data'
-import { TestPredChart, RectDrawInfo } from '../components/test-pred-chart'
-import { LegendLayout } from '../components/legend-layout'
-import { circleWorkerCode } from '../workers/circleWorker'
+import { PredictionsChart, RectDrawInfo } from '../components/predictions-chart'
 
 interface Data {
   data: number[][]
   labels: number[]
 }
 
-// Create a blob from the worker code string
-const circleWorkerBlob = new Blob([circleWorkerCode], {
-  type: 'application/javascript',
-})
+const minX = -8
+const maxX = 8
+const minY = -8
+const maxY = 8
+const testPointsStep = 0.25
+const defaultPointsNum = 150
+const defaultEpochs = 30
+const defaultLearningRate = 0.2
 
 export function DemoMLPTesting() {
-  const [epochsRaw, setEpochs] = React.useState<number | string>(30)
-  const [learningRateRaw, setLearningRate] = React.useState<number | string>(
-    0.2
+  // Learning rate
+  const [lrRaw, setLr] = React.useState<number | string>(defaultLearningRate)
+  // Training predictions
+  const [trainPredicts, setTrainPredicts] = React.useState<number[]>([])
+  // Test predictions
+  const [testPredicts, setTestPredicts] = React.useState<RectDrawInfo[]>([])
+  const [epochsRaw, setEpochs] = React.useState<number | string>(defaultEpochs)
+  const [pointsNumRaw, setPointsNum] = React.useState<number | string>(
+    defaultPointsNum
   )
-
-  const [startTraining, setStartTraining] = React.useState<boolean>(false)
-  const [dataLoaded, setDataLoaded] = React.useState<boolean>(false)
-
-  const [dataPointsRaw, setDataPoints] = React.useState<number | string>(150)
-
   const [losses, setLosses] = React.useState<number[]>([])
-  const [trainingPredictions, setTrainingPredictions] = React.useState<
-    number[]
-  >([])
-  const [testPredictions, setTestPredictions] = React.useState<RectDrawInfo[]>(
-    []
-  )
 
   const epochs = toInt(epochsRaw, 0)
-  const learningRate = toFloat(learningRateRaw, 0)
-  const dataPoints = toInt(dataPointsRaw, 0)
+  const lr = toFloat(lrRaw, 0)
+  const pointsNum = toInt(pointsNumRaw, 0)
 
-  const [circleData, setCircleData] = React.useState<Data>({
-    data: [],
-    labels: [],
-  })
-  const [hoverTrue, setHoverTrue] = React.useState<boolean>(false)
-  const [hoverFalse, setHoverFalse] = React.useState<boolean>(false)
+  const [trainSet, setTrainSet] = React.useState<Data>({ data: [], labels: [] })
 
-  React.useEffect(() => {
-    setCircleData(generateCircleData(150))
+  const trainSetValues = React.useMemo(
+    () => convertDataToValue(trainSet),
+    [trainSet]
+  )
+
+  // Inference.
+  const testCallback = React.useCallback((mlp: MLP) => {
+    console.log('+++ Inference')
+    const newTestPredictions = []
+    for (let xVal = minX; xVal <= maxX; xVal += testPointsStep) {
+      for (let yVal = minY; yVal <= maxY; yVal += testPointsStep) {
+        const testValue = [v(xVal), v(yVal)]
+        const pred = mlp.forward(testValue)[0].data
+        newTestPredictions.push({ xVal, yVal, pred })
+      }
+    }
+    setTestPredicts(newTestPredictions)
   }, [])
 
-  //Dynamically generate training dataset
-  const circleDataValues = React.useMemo(() => {
-    const vals = convertDataToValue(circleData)
-    setDataLoaded(true)
-    return vals
-  }, [circleData])
-
-  React.useEffect(() => {
-    const circleWorkerUrl = URL.createObjectURL(circleWorkerBlob)
-    const circleWorker = new Worker(circleWorkerUrl)
-    setDataLoaded(false)
-    circleWorker.onmessage = (event: MessageEvent<Data>) => {
-      setCircleData(event.data)
-    }
-    circleWorker.postMessage(dataPoints)
-
-    return () => {
-      circleWorker.terminate()
-      URL.revokeObjectURL(circleWorkerUrl)
-    }
-  }, [dataPoints])
-
+  // Training.
   const trainCallback = React.useCallback(() => {
+    console.log('+++ Training')
     // Create a Multi Layer Perceptron (MLP) network.
     // - 3 inputs
     // - 1st layer of 4 neurons
     // - 2nd layer of 4 neurons
     // - 1 output
-    setStartTraining(true)
     const mlp = new MLP(2, [4, 4, 1])
-
     const lossHistory: number[] = []
 
     // Run training loops for a specified number of epochs.
     for (let epoch = 1; epoch <= epochs; epoch++) {
       // Forward pass
       const ypred: Value[] = []
-      for (const x of circleDataValues.dataValues) {
+      for (const x of trainSetValues.dataValues) {
         ypred.push(mlp.forward(x)[0])
       }
 
       // Calculate loss
       // Mean square error loss function.
       let loss = v(0)
-      for (let i = 0; i < circleDataValues.labelValues.length; i++) {
-        loss = loss.add(circleDataValues.labelValues[i].sub(ypred[i]).pow(2))
+      for (let i = 0; i < trainSetValues.labelValues.length; i++) {
+        loss = loss.add(trainSetValues.labelValues[i].sub(ypred[i]).pow(2))
       }
-      loss = loss.div(circleDataValues.labelValues.length)
+      loss = loss.div(trainSetValues.labelValues.length)
       lossHistory.push(loss.data)
 
       // Backward pass
@@ -126,33 +114,28 @@ export function DemoMLPTesting() {
 
       // Update
       for (const p of mlp.parameters()) {
-        p.data += -learningRate * p.grad
+        p.data += -lr * p.grad
       }
 
-      setTrainingPredictions(ypred.map((out) => out.data))
+      setTrainPredicts(ypred.map((out) => out.data))
     }
     setLosses([...lossHistory])
-    const newTestPredictions = []
-    for (let i = -5; i <= 5; i += 0.25) {
-      for (let j = -5; j <= 5; j += 0.25) {
-        const testValue = [v(i), v(j)]
-        newTestPredictions.push({
-          xVal: i,
-          yVal: j,
-          pred: mlp.forward(testValue)[0].data,
-        })
-      }
-    }
-    setTestPredictions(newTestPredictions)
-  }, [epochs, learningRate, circleDataValues, circleData])
 
+    testCallback(mlp)
+  }, [epochs, lr, trainSetValues, testCallback])
+
+  // Update training set once the data points num is updated.
   React.useEffect(() => {
-    //If there are no losses and dynamic data has been initialized
-    if (losses.length === 0 && circleData.data.length !== 0) {
-      // Initial training
-      trainCallback()
-    }
-  }, [trainCallback, losses, circleData])
+    console.log('+++ Generate training set')
+    setTrainSet(generateCircleData(pointsNum))
+  }, [pointsNum])
+
+  // Once the training set is updated, launch the training process.
+  React.useEffect(() => {
+    if (!trainSet.data.length) return
+    console.log('+++ Launch the training')
+    trainCallback()
+  }, [trainCallback, trainSet])
 
   const lossChartData: Serie[] = [
     {
@@ -166,10 +149,10 @@ export function DemoMLPTesting() {
     },
   ]
 
-  const data: ScatterPlotRawSerie<ScatterPlotDatum>[] = [
+  const trainScatterData: ScatterPlotRawSerie<ScatterPlotDatum>[] = [
     {
       id: 'circle_data',
-      data: circleData.data.map((datum) => {
+      data: trainSet.data.map((datum) => {
         return {
           x: datum[0],
           y: datum[1],
@@ -185,14 +168,16 @@ export function DemoMLPTesting() {
         <StyledLink href="https://en.wikipedia.org/wiki/Multilayer_perceptron">
           Multilayer perceptron
         </StyledLink>{' '}
-        against a set of dynamically generated data.
+        against a set of dynamically generated "circular" data, where the inner
+        circle has positive labels (1), and the outer circle has negative labels
+        (-1)
       </ParagraphMedium>
 
       <ParagraphMedium>
         Once the network has been trained, we test it against a uniform range of
-        data between the points (-5, -5) and (5, 5). The accuracy of our test
-        predictions provides an additional measure of clarity regarding how well
-        our model is predicting the expected output.
+        data. The accuracy of our test predictions provides an additional
+        measure of clarity regarding how well our model is predicting the
+        expected output.
       </ParagraphMedium>
 
       <H2>Code Context</H2>
@@ -214,7 +199,7 @@ export function DemoMLPTesting() {
         <Block display="flex" flexDirection={['column', 'column', 'row']}>
           <Block
             display="flex"
-            flexDirection={'column'}
+            flexDirection="column"
             flex="1"
             marginRight={['0px', '0px', '10px']}
           >
@@ -231,47 +216,46 @@ export function DemoMLPTesting() {
               />
             </FormControl>
           </Block>
+
           <Block
             display="flex"
-            flexDirection={'column'}
+            flexDirection="column"
             flex="1"
+            marginLeft={['0px', '0px', '10px']}
             marginRight={['0px', '0px', '10px']}
           >
             <FormControl
+              label={() => 'Learning Rate'}
+              caption="Gradient convergence step size"
+            >
+              <Input value={lrRaw} onChange={(e) => setLr(e.target.value)} />
+            </FormControl>
+          </Block>
+
+          <Block
+            display="flex"
+            flexDirection="column"
+            flex="1"
+            marginLeft={['0px', '0px', '10px']}
+          >
+            <FormControl
               label={() => 'Data Points'}
-              caption="Scatterplot points generated"
+              caption="Number of generated scatterplot points"
             >
               <Input
                 type="number"
                 min={0}
                 max={1000}
                 maxLength={4}
-                value={dataPointsRaw}
+                value={pointsNumRaw}
                 onChange={(e) => {
-                  setStartTraining(false)
-                  setDataPoints(e.target.value)
+                  setPointsNum(e.target.value)
                 }}
               />
             </FormControl>
           </Block>
-
-          <Block
-            flex="1"
-            flexDirection={'column'}
-            width="100%"
-            marginLeft={['0px', '0px', '10px']}
-          >
-            <FormControl
-              label={() => 'Learning Rate'}
-              caption="Gradient convergence step size"
-            >
-              <Input
-                value={learningRateRaw}
-                onChange={(e) => setLearningRate(e.target.value)}
-              />
-            </FormControl>
-          </Block>
         </Block>
+
         <Button
           startEnhancer={() => <GiWeightLiftingUp />}
           onClick={trainCallback}
@@ -292,53 +276,22 @@ export function DemoMLPTesting() {
               {(losses[losses.length - 1] || 0).toFixed(4)}
             </MonoLabelLarge>
           </Block>
-          <Block marginRight={['0', '0', '30px']} flex={1}>
-            <LegendLayout
-              legend={[
-                {
-                  text: 'True (1)',
-                  standardColor: 'rgba(0, 255, 0, 0.2)',
-                  hovered: hoverTrue,
-                  hoverColor: 'rgba(0, 255, 0, 0.5)',
-                  onMouseEnter: () => setHoverTrue(true),
-                  onMouseLeave: () => setHoverTrue(false),
-                },
-                {
-                  text: 'False (-1)',
-                  standardColor: 'rgba(255, 0, 0, 0.2)',
-                  hovered: hoverFalse,
-                  hoverColor: 'rgba(255, 0, 0, 0.5)',
-                  onMouseEnter: () => setHoverFalse(true),
-                  onMouseLeave: () => setHoverFalse(false),
-                },
-              ]}
-            />
-          </Block>
+
           <Block>
-            <H2>Final Predictions</H2>
+            <H2>Training Predictions</H2>
             <Table
               columns={['x', 'y', 'Label', 'Predict']}
               data={
-                dataLoaded &&
-                circleDataValues &&
-                circleDataValues.dataValues.length !== 0 &&
-                trainingPredictions.length !== 0 &&
-                circleDataValues.labelValues.length >= 10
-                  ? circleDataValues.labelValues
-                      .slice(0, 10)
-                      .map((y, trainingEntryIndex) => {
-                        return [
-                          circleDataValues.dataValues[
-                            trainingEntryIndex
-                          ][0].data.toFixed(2),
-                          circleDataValues.dataValues[
-                            trainingEntryIndex
-                          ][1].data.toFixed(2),
-                          y.data,
-                          trainingPredictions[trainingEntryIndex].toFixed(4),
-                        ]
-                      })
-                  : [['-1.00', '-1.00', '1', '-1.0000']]
+                trainSetValues?.labelValues?.length
+                  ? trainSetValues.labelValues.slice(0, 10).map((y, idx) => {
+                      return [
+                        trainSetValues.dataValues[idx][0]?.data?.toFixed(2),
+                        trainSetValues.dataValues[idx][1]?.data?.toFixed(2),
+                        y?.data,
+                        trainPredicts[idx]?.toFixed(4),
+                      ]
+                    })
+                  : []
               }
             />
           </Block>
@@ -349,19 +302,58 @@ export function DemoMLPTesting() {
           flex="1"
           display={'flex'}
           flexDirection={'column'}
+          overflow="hidden"
         >
-          <H2>{`Test Predictions Visualization ${
-            startTraining ? '(Predicted)' : '(Actual)'
-          }`}</H2>
-          <Block height="440px" $style={{ fontFamily: 'monospace' }}>
-            <TestPredChart
-              data={data}
+          <Block marginRight={['0', '0', '40px']} flex={1}>
+            <H2>Legend</H2>
+            <MonoLabelSmall>
+              <Block display="flex" flexDirection="row" alignItems="center">
+                <Block display="flex" marginRight="30px" alignItems="center">
+                  <div
+                    style={{
+                      backgroundColor: 'rgba(0, 255, 0, 0.2)',
+                      width: '20px',
+                      height: '20px',
+                      marginRight: '10px',
+                    }}
+                  />
+                  <div>Positive (1)</div>
+                </Block>
+                <Block display="flex" alignItems="center">
+                  <div
+                    style={{
+                      backgroundColor: 'rgba(255, 0, 0, 0.2)',
+                      width: '20px',
+                      height: '20px',
+                      marginRight: '10px',
+                    }}
+                  />
+                  <div>Negative (-1)</div>
+                </Block>
+              </Block>
+            </MonoLabelSmall>
+          </Block>
+
+          <H2>MLP Predictions</H2>
+          <Block
+            display="flex"
+            width="100%"
+            flexDirection="row"
+            height="440px"
+            $style={{ fontFamily: 'monospace' }}
+          >
+            <PredictionsChart
+              data={trainScatterData}
               nodeSize={10}
-              labels={circleData.labels}
-              trainingStarted={startTraining}
-              predictionData={testPredictions ? testPredictions : []}
+              labels={trainSet.labels}
+              predictionData={testPredicts ? testPredicts : []}
+              minX={-8}
+              maxX={8}
+              minY={-8}
+              maxY={8}
             />
           </Block>
+
           <H2>Training Loss History</H2>
           <Block
             height="440px"

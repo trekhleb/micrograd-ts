@@ -20,7 +20,7 @@ export const generateCircleData = (n: number): Data => {
     labels.push(1)
   }
   for (let i = 0; i < n / 2; i++) {
-    const r = Math.random() * 2.0 + 3.0
+    const r = Math.random() * 2.0 + 4.0
     const t = (2 * Math.PI * i) / 50.0
     data.push([r * Math.sin(t), r * Math.cos(t)])
     labels.push(-1)
