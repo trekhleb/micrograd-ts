@@ -129,7 +129,6 @@ export function DemoMLPTesting() {
   // Once the training set is updated, launch the training process.
   React.useEffect(() => {
     if (!trainSet.data.length || losses.length) return
-    console.log('+++ TRAIN')
     trainCallback()
   }, [trainCallback, trainSet, losses])
 
