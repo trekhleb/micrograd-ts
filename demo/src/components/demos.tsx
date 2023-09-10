@@ -7,12 +7,15 @@ import { DemoMLP } from '../demos/demo-mlp'
 import { DemoNeuron } from '../demos/demo-neuron'
 import { DemoValue } from '../demos/demo-value'
 import { DemoMLPTraining } from '../demos/demo-mlp-training'
+import { DemoMLPTrainingDataGen } from '../demos/demo-mlp-training-datagen'
 
 enum TabKey {
   Value = 'value',
   Neuron = 'neuron',
   MLP = 'mlp',
   Training = 'training',
+  TrainingDataGen = 'training_datagen',
+
 }
 
 type TabConfig = { title: string; content: React.ReactNode }
@@ -22,6 +25,7 @@ const TabsMap: Map<TabKey, TabConfig> = new Map([
   [TabKey.Neuron, { title: 'Neuron', content: <DemoNeuron /> }],
   [TabKey.MLP, { title: 'MLP', content: <DemoMLP /> }],
   [TabKey.Training, { title: 'MLP Training', content: <DemoMLPTraining /> }],
+  [TabKey.TrainingDataGen, {title: 'MLP Training DataGen', content: <DemoMLPTrainingDataGen/>}]
 ])
 
 export function Demos() {
