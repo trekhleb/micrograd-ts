@@ -10,18 +10,18 @@ import { StyledLink } from 'baseui/link'
 import { ParagraphMedium, MonoLabelLarge } from 'baseui/typography'
 import { Table } from 'baseui/table-semantic'
 
-import { v, Value } from '../../../../micrograd/engine'
-import { MLP } from '../../../../micrograd/nn'
-import { Code } from '../../components/code-block'
-import { CodeLinks } from '../../components/code-links'
-import { H2 } from '../../components/h2'
-import { LossChart } from '../../components/loss-chart'
-import { toFloat, toInt } from '../../utils/numbers'
-import { convertDataToValue, generateCircleData } from './dataUtils'
-import { MoonChart, RectDrawInfo } from '../../components/MoonData'
-import { CaptionBlock } from '../../components/CaptionBlock'
-import { LegendLayout } from '../../components/LegendLayout'
-import { circleWorkerCode } from './circleWorker'
+import { v, Value } from '../../../micrograd/engine'
+import { MLP } from '../../../micrograd/nn'
+import { Code } from '../components/code-block'
+import { CodeLinks } from '../components/code-links'
+import { H2 } from '../components/h2'
+import { LossChart } from '../components/loss-chart'
+import { toFloat, toInt } from '../utils/numbers'
+import { convertDataToValue, generateCircleData } from '../utils/data'
+import { TestPredChart, RectDrawInfo } from '../components/test-pred-chart'
+import { CaptionBlock } from '../components/caption-block'
+import { LegendLayout } from '../components/legend-layout'
+import { circleWorkerCode } from '../workers/circleWorker'
 
 interface Data {
   data: number[][]
@@ -31,8 +31,7 @@ interface Data {
 // Create a blob from the worker code string
 const circleWorkerBlob = new Blob([circleWorkerCode], { type: 'application/javascript' });
 
-
-export function DemoMLPTraining() {
+export function DemoMLPTrainingDataGen() {
   const [epochsRaw, setEpochs] = React.useState<number | string>(30)
   const [learningRateRaw, setLearningRate] = React.useState<number | string>(
     0.2
@@ -69,12 +68,10 @@ export function DemoMLPTraining() {
   React.useEffect(() => {
     const circleWorkerUrl = URL.createObjectURL(circleWorkerBlob);
     const circleWorker = new Worker(circleWorkerUrl);
-    //const circleWorker = new Worker('/circleWorker.js')
     setDataLoaded(false);
     circleWorker.onmessage = (event: MessageEvent<Data>) => {
       setCircleData(event.data)
     }
-    console.log(dataPoints);
     circleWorker.postMessage(dataPoints)
 
     return () => {
@@ -177,16 +174,14 @@ export function DemoMLPTraining() {
         <StyledLink href="https://en.wikipedia.org/wiki/Multilayer_perceptron">
           Multilayer perceptron
         </StyledLink>{' '}
-        (MLP) which consists of the forward pass, loss calculation, backward
-        pass, and adjusting the neurons weights.
+        against a set of dynamically generated data. 
       </ParagraphMedium>
 
       <ParagraphMedium>
-        This is a simplified example where we're only dealing with the training
-        data and, basically, overfitting the network. However, it allows us to
-        test if the backpropagation implementation works correctly. After
-        several epoch of training you may see that the network predictions get
-        pretty close to the prediction from the training set.
+        Once the network has been trained, we test it against a uniform range of data
+        between the points (-5, -5) and (5, 5). The accuracy of our test predictions
+        provides an additional measure of clarity regarding how well our model is
+        predicting the expected output.
       </ParagraphMedium>
 
       <H2>Code Context</H2>
@@ -309,9 +304,9 @@ export function DemoMLPTraining() {
         </Block>
 
         <Block marginLeft={['0', '0', '30px']} flex="1" display={'flex'} flexDirection={'column'}>
-          <H2>{`Data Visualization ${startTraining ? '(Predicted)' : '(Actual)'}`}</H2>
+          <H2>{`Test Predictions Visualization ${startTraining ? '(Predicted)' : '(Actual)'}`}</H2>
             <Block height="440px" $style={{ fontFamily: 'monospace' }}>
-              <MoonChart 
+              <TestPredChart 
                 data={data} 
                 nodeSize={10}
                 labels={circleData.labels}

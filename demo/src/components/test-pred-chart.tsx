@@ -6,7 +6,7 @@ export interface RectDrawInfo {
   pred: number,
 }
 
-interface MoonChartProps {
+interface TestPredChartProps {
   data: ScatterPlotRawSerie<ScatterPlotDatum>[],
   nodeSize: number,
   predictionData?: RectDrawInfo[],
@@ -14,7 +14,7 @@ interface MoonChartProps {
   trainingStarted: boolean
 }
 
-export const MoonChart = ({data, labels, predictionData, trainingStarted, nodeSize}: MoonChartProps) => {
+export const TestPredChart = ({data, labels, predictionData, trainingStarted, nodeSize}: TestPredChartProps) => {
   return (
     <ResponsiveScatterPlot
       data={data}

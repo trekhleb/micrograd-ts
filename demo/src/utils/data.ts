@@ -1,4 +1,4 @@
-import { Value, v } from "../../../../micrograd/engine";
+import { Value, v } from "../../../micrograd/engine";
 
 interface Data {
   data: number[][];
@@ -46,6 +46,5 @@ export const convertDataToValue = (data: Data): DataValues => {
     dataValues,
     labelValues,
   }
-  
 }
 
